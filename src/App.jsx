@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Clock, Search, Filter, CheckCircle2, Circle, TrendingUp, Landmark } from 'lucide-react';
+import { MapPin, Clock, Search, Filter, CheckCircle2, Circle, TrendingUp, Landmark, Plus, X, ChevronDown } from 'lucide-react';
 
 const INITIAL_LOCATIONS = [
   { city: "Shizuoka", kanji: "静岡県", category: "Urban x Nature", budget: 40000, priority: 5, description: "Urban x Nature" },
@@ -15,17 +15,41 @@ const INITIAL_LOCATIONS = [
   { city: "Jogasaki Coast", kanji: "城ヶ崎海岸", category: "Nature", budget: 12000, priority: 4, description: "Nature" },
 ];
 
+const PRIORITY_COLORS = {
+  5: 'bg-[#C084FC]/10 text-[#C084FC] border border-[#C084FC]/30',
+  4: 'bg-violet-950/40 text-violet-300/60 border border-violet-900/30',
+  3: 'bg-indigo-950/40 text-indigo-300/60 border border-indigo-900/30',
+  2: 'bg-slate-950/40 text-slate-300/60 border border-slate-900/30',
+  1: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
+};
+
 export default function App() {
-  const [locations, setLocations] = useState(INITIAL_LOCATIONS);
+  const [locations, setLocations] = useState(() => {
+    const saved = localStorage.getItem('onyx_itinerary_locations');
+    return saved ? JSON.parse(saved) : INITIAL_LOCATIONS;
+  });
   const [search, setSearch] = useState('');
   const [filterPriority, setFilterPriority] = useState(0);
-  const [visited, setVisited] = useState({});
+  const [visited, setVisited] = useState(() => {
+    const saved = localStorage.getItem('onyx_itinerary_visited');
+    return saved ? JSON.parse(saved) : {};
+  });
   const [time, setTime] = useState(new Date());
+  const [isAdding, setIsAdding] = useState(false);
+  const [newLoc, setNewLoc] = useState({ city: '', kanji: '', category: 'Urban', budget: 0, priority: 5 });
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('onyx_itinerary_locations', JSON.stringify(locations));
+  }, [locations]);
+
+  useEffect(() => {
+    localStorage.setItem('onyx_itinerary_visited', JSON.stringify(visited));
+  }, [visited]);
 
   const tokyoTime = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Asia/Tokyo',
@@ -40,11 +64,24 @@ export default function App() {
     (filterPriority === 0 || loc.priority === filterPriority)
   );
 
-  const totalBudget = filteredLocations.reduce((acc, loc) => acc + loc.budget, 0);
+  const totalBudget = filteredLocations.reduce((acc, loc) => acc + (visited[loc.city] ? 0 : loc.budget), 0);
   const visitedCount = Object.values(visited).filter(v => v).length;
 
   const toggleVisited = (city) => {
     setVisited(prev => ({ ...prev, [city]: !prev[city] }));
+  };
+
+  const handleAddLocation = () => {
+    if (!newLoc.city) return;
+    setLocations([...locations, { ...newLoc, description: newLoc.category }]);
+    setNewLoc({ city: '', kanji: '', category: 'Urban', budget: 0, priority: 5 });
+    setIsAdding(false);
+  };
+
+  const handleDelete = (city) => {
+    if (window.confirm(`Remove ${city} from itinerary?`)) {
+      setLocations(locations.filter(l => l.city !== city));
+    }
   };
 
   return (
@@ -57,7 +94,12 @@ export default function App() {
             <div className="w-1.5 h-6 bg-[#C084FC]" />
             <h1 className="text-xl font-black uppercase tracking-tighter">Onyx Itinerary</h1>
           </div>
-          <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest border border-zinc-900 px-3 py-1">System_v2</div>
+          <button 
+            onClick={() => setIsAdding(true)}
+            className="h-10 w-10 border border-zinc-900 flex items-center justify-center hover:border-[#C084FC] transition-colors"
+          >
+            <Plus size={20} />
+          </button>
         </header>
 
         {/* Tokyo Clock Hero */}
@@ -105,7 +147,7 @@ export default function App() {
         <div className="onyx-card p-6 mb-10 bg-gradient-to-br from-zinc-900/50 to-transparent">
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest block mb-1">Planned Budget</span>
+              <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest block mb-1">Remaining Budget</span>
               <div className="text-2xl font-black mono-number text-[#C084FC]">¥{totalBudget.toLocaleString()}</div>
             </div>
             <TrendingUp size={32} className="text-zinc-800" />
@@ -131,7 +173,7 @@ export default function App() {
 
                 <div className={`onyx-card p-5 transition-all group ${visited[loc.city] ? 'opacity-40 border-dashed' : 'hover:border-[#C084FC]/30'}`}>
                   <div className="flex justify-between items-start mb-2">
-                    <div>
+                    <div onDoubleClick={() => handleDelete(loc.city)}>
                       <h3 className="text-lg font-black uppercase tracking-tighter leading-none mb-1">{loc.city}</h3>
                       <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{loc.kanji}</p>
                     </div>
@@ -146,7 +188,7 @@ export default function App() {
                       {loc.category}
                     </div>
                     <div className="text-[10px] font-black text-white mono-number">¥{loc.budget.toLocaleString()}</div>
-                    <div className={`ml-auto text-[9px] font-black px-2 py-0.5 rounded ${loc.priority === 5 ? 'bg-red-500/20 text-red-400' : 'bg-zinc-900 text-zinc-600'}`}>
+                    <div className={`ml-auto text-[9px] font-black px-2 py-0.5 rounded transition-colors ${PRIORITY_COLORS[loc.priority] || 'bg-zinc-900 text-zinc-600'}`}>
                       {loc.priority}/5
                     </div>
                   </div>
@@ -155,6 +197,63 @@ export default function App() {
             ))}
           </div>
         </div>
+
+        {/* Add Modal */}
+        <AnimatePresence>
+          {isAdding && (
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              className="fixed inset-0 z-50 bg-black p-8 flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-12">
+                <h3 className="text-2xl font-black uppercase tracking-tighter">Add Destination</h3>
+                <button onClick={() => setIsAdding(false)} className="text-zinc-600"><X size={32} /></button>
+              </div>
+
+              <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pb-10">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">City Name</label>
+                  <input type="text" placeholder="e.g. Nara" value={newLoc.city} onChange={e => setNewLoc({...newLoc, city: e.target.value})} className="onyx-input" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Kanji / Translation</label>
+                  <input type="text" placeholder="e.g. 奈良市" value={newLoc.kanji} onChange={e => setNewLoc({...newLoc, kanji: e.target.value})} className="onyx-input" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Budget (JPY)</label>
+                  <input type="number" value={newLoc.budget} onChange={e => setNewLoc({...newLoc, budget: parseInt(e.target.value) || 0})} className="onyx-input" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Category</label>
+                  <div className="relative">
+                    <select value={newLoc.category} onChange={e => setNewLoc({...newLoc, category: e.target.value})} className="onyx-input appearance-none">
+                      <option>Urban</option>
+                      <option>Nature</option>
+                      <option>Historical</option>
+                      <option>Entertainment</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-600">
+                      <ChevronDown size={14} />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Priority (2-5)</label>
+                  <input type="number" min="2" max="5" value={newLoc.priority} onChange={e => setNewLoc({...newLoc, priority: parseInt(e.target.value) || 5})} className="onyx-input" />
+                </div>
+              </div>
+
+              <button 
+                onClick={handleAddLocation}
+                className="h-14 bg-[#C084FC] text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-[#D4A5FF] transition-colors"
+              >
+                Execute Protocol
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </div>

@@ -49,6 +49,30 @@
     letter-spacing: 0.1em;
     font-size: 0.75rem;
   }
+
+  .onyx-input {
+    background-color: var(--color-onyx-card);
+    border: 1px solid var(--color-onyx-border);
+    color: white;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-onyx);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+
+  .onyx-input:focus {
+    border-color: var(--color-onyx-purple);
+    box-shadow: 0 0 15px var(--color-onyx-purple-glow);
+  }
+
+  .onyx-input::placeholder {
+    color: #3F3F46;
+  }
 }
 
 .timeline-line {
