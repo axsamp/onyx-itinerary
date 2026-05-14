@@ -3,16 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Clock, Search, Filter, CheckCircle2, Circle, TrendingUp, Landmark, Plus, X, ChevronDown } from 'lucide-react';
 
 const INITIAL_LOCATIONS = [
+  { city: "Montbell", kanji: "モンベル", category: "Retail", budget: 0, priority: 5, description: "Outdoor gear & apparel" },
+  { city: "mont-bell Yokohama Shin-Yamashita", kanji: "モンベル 横浜しん山下", category: "Retail", budget: 0, priority: 4, description: "Shin-Yamashita Store" },
+  { city: "Cerulean Tower Tokyu Hotel", kanji: "セルリアンタワー東急ホテル", category: "Hotel", budget: 0, priority: 5, description: "Main Base - Shibuya" },
+  { city: "Hase Station", kanji: "長谷駅", category: "Transit", budget: 0, priority: 3, description: "Kamakura access" },
+  { city: "OIMACHI TRACKS", kanji: "大井町トラックス", category: "Retail", budget: 0, priority: 3, description: "Shopping area" },
+  { city: "Nihombashi Mitsukoshi Main Store", kanji: "日本橋三越本店", category: "Retail", budget: 0, priority: 4, description: "Luxury department store" },
+  { city: "Laforet Harajuku", kanji: "ラフォーレ原宿", category: "Retail", budget: 0, priority: 4, description: "Harajuku fashion hub" },
+  { city: "Pensta Ecute Ueno", kanji: "ペンスタ エキュート上野", category: "Retail", budget: 0, priority: 2, description: "Suica Penguin goods" },
+  { city: "FREAK'S STORE Shinjuku", kanji: "フリークスストア", category: "Retail", budget: 0, priority: 4, description: "Lumineesutoshinjukuwimenzuten" },
+  { city: "AGILITY Nippori Leather", kanji: "AGILITY日暮里革工房", category: "Retail", budget: 0, priority: 4, description: "Leather goods workshop" },
+  { city: "Higashirinkan", kanji: "東林間", category: "Location", budget: 0, priority: 3, description: "3 Chome-18-3" },
+  { city: "Mu (Nothingness)", kanji: "無", category: "Location", budget: 0, priority: 5, description: "Philosophy node" },
+  { city: "Narita International Airport", kanji: "成田国際空港", category: "Transit", budget: 0, priority: 5, description: "Entry/Exit Node" },
+  { city: "Red Roof Inn Kamata", kanji: "レッドルーフイン蒲田", category: "Hotel", budget: 0, priority: 5, description: "Kamata base" },
   { city: "Shizuoka", kanji: "静岡県", category: "Urban x Nature", budget: 40000, priority: 5, description: "Urban x Nature" },
   { city: "Nagoya", kanji: "名古屋", category: "Urban", budget: 30000, priority: 4, description: "Urban" },
   { city: "Tokyo Dome", kanji: "東京ドームシティ", category: "Entertainment", budget: 10000, priority: 2, description: "Entertainment" },
-  { city: "Chiba", kanji: "千葉県", category: "Natural", budget: 15000, priority: 4, description: "Natural" },
-  { city: "Yokohama", kanji: "横浜", category: "City", budget: 15000, priority: 2, description: "City" },
-  { city: "Atami", kanji: "熱海市", category: "City", budget: 14000, priority: 3, description: "City" },
-  { city: "Arakurayama Sengen Park", kanji: "新倉山浅間公園", category: "Nature", budget: 10000, priority: 3, description: "Nature" },
-  { city: "Kawagoe", kanji: "川越", category: "Urban x Historical", budget: 15000, priority: 3, description: "Urban x Historical" },
-  { city: "Mount Oyama", kanji: "大山", category: "Nature", budget: 10000, priority: 4, description: "Nature" },
-  { city: "Jogasaki Coast", kanji: "城ヶ崎海岸", category: "Nature", budget: 12000, priority: 4, description: "Nature" },
 ];
 
 const PRIORITY_COLORS = {
@@ -26,7 +33,16 @@ const PRIORITY_COLORS = {
 export default function App() {
   const [locations, setLocations] = useState(() => {
     const saved = localStorage.getItem('onyx_itinerary_locations');
-    return saved ? JSON.parse(saved) : INITIAL_LOCATIONS;
+    const current = saved ? JSON.parse(saved) : INITIAL_LOCATIONS;
+    
+    // Smart Merge: Ensure all INITIAL_LOCATIONS (including new imports) exist in the list
+    const merged = [...current];
+    INITIAL_LOCATIONS.forEach(initLoc => {
+      if (!merged.find(l => l.city === initLoc.city)) {
+        merged.push(initLoc);
+      }
+    });
+    return merged;
   });
   const [search, setSearch] = useState('');
   const [filterPriority, setFilterPriority] = useState(0);
@@ -45,17 +61,30 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('onyx_itinerary_locations', JSON.stringify(locations));
+    // Telemetry Sync for Hub
+    localStorage.setItem('onyx_signal_count', locations.length); 
   }, [locations]);
+
+  // Hard Sync: One-time force injection of new locations
+  useEffect(() => {
+    const hasSynced = localStorage.getItem('onyx_hard_sync_v1');
+    if (!hasSynced) {
+      setLocations(prev => {
+        const merged = [...prev];
+        INITIAL_LOCATIONS.forEach(initLoc => {
+          if (!merged.find(l => l.city === initLoc.city)) {
+            merged.push(initLoc);
+          }
+        });
+        return merged;
+      });
+      localStorage.setItem('onyx_hard_sync_v1', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('onyx_itinerary_visited', JSON.stringify(visited));
   }, [visited]);
-
-  // Sync to Onyx System Central Storage
-  useEffect(() => {
-    const grandTotal = locations.reduce((acc, loc) => acc + loc.budget, 0);
-    localStorage.setItem('onyx_total_budget', grandTotal.toString());
-  }, [locations]);
 
   const tokyoTime = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Asia/Tokyo',
