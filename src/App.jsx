@@ -51,6 +51,12 @@ export default function App() {
     localStorage.setItem('onyx_itinerary_visited', JSON.stringify(visited));
   }, [visited]);
 
+  // Sync to Onyx System Central Storage
+  useEffect(() => {
+    const grandTotal = locations.reduce((acc, loc) => acc + loc.budget, 0);
+    localStorage.setItem('onyx_total_budget', grandTotal.toString());
+  }, [locations]);
+
   const tokyoTime = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Asia/Tokyo',
     hour: '2-digit',
@@ -59,7 +65,7 @@ export default function App() {
     hour12: false
   }).format(time);
 
-  const filteredLocations = locations.filter(loc => 
+  const filteredLocations = locations.filter(loc =>
     (loc.city.toLowerCase().includes(search.toLowerCase()) || loc.kanji.includes(search)) &&
     (filterPriority === 0 || loc.priority === filterPriority)
   );
@@ -87,14 +93,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-[#C084FC]/30 pb-20">
       <div className="max-w-md mx-auto p-6">
-        
+
         {/* Header */}
         <header className="flex justify-between items-center py-6">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-6 bg-[#C084FC]" />
             <h1 className="text-xl font-black uppercase tracking-tighter">Onyx Itinerary</h1>
           </div>
-          <button 
+          <button
             onClick={() => setIsAdding(true)}
             className="h-10 w-10 border border-zinc-900 flex items-center justify-center hover:border-[#C084FC] transition-colors"
           >
@@ -122,9 +128,9 @@ export default function App() {
         <div className="space-y-4 mb-8">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={16} />
-            <input 
-              type="text" 
-              placeholder="SEARCH DESTINATIONS..." 
+            <input
+              type="text"
+              placeholder="SEARCH DESTINATIONS..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="bg-zinc-900/50 border border-zinc-900 w-full p-4 pl-12 rounded-lg text-xs font-bold tracking-widest focus:outline-none focus:border-[#C084FC] transition-colors"
@@ -132,8 +138,8 @@ export default function App() {
           </div>
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             {[0, 5, 4, 3, 2].map(p => (
-              <button 
-                key={p} 
+              <button
+                key={p}
                 onClick={() => setFilterPriority(p)}
                 className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest border whitespace-nowrap transition-all ${filterPriority === p ? 'bg-[#C084FC] border-[#C084FC] text-black' : 'border-zinc-900 text-zinc-600'}`}
               >
@@ -147,7 +153,7 @@ export default function App() {
         <div className="onyx-card p-6 mb-10 bg-gradient-to-br from-zinc-900/50 to-transparent">
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest block mb-1">Remaining Budget</span>
+              <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest block mb-1">Total Cost</span>
               <div className="text-2xl font-black mono-number text-[#C084FC]">¥{totalBudget.toLocaleString()}</div>
             </div>
             <TrendingUp size={32} className="text-zinc-800" />
@@ -157,10 +163,10 @@ export default function App() {
         {/* Timeline */}
         <div className="relative">
           <div className="timeline-line" />
-          
+
           <div className="space-y-8">
             {filteredLocations.map((loc, idx) => (
-              <motion.div 
+              <motion.div
                 key={loc.city}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -201,7 +207,7 @@ export default function App() {
         {/* Add Modal */}
         <AnimatePresence>
           {isAdding && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 50 }}
@@ -215,20 +221,20 @@ export default function App() {
               <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pb-10">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">City Name</label>
-                  <input type="text" placeholder="e.g. Nara" value={newLoc.city} onChange={e => setNewLoc({...newLoc, city: e.target.value})} className="onyx-input" />
+                  <input type="text" placeholder="e.g. Nara" value={newLoc.city} onChange={e => setNewLoc({ ...newLoc, city: e.target.value })} className="onyx-input" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Kanji / Translation</label>
-                  <input type="text" placeholder="e.g. 奈良市" value={newLoc.kanji} onChange={e => setNewLoc({...newLoc, kanji: e.target.value})} className="onyx-input" />
+                  <input type="text" placeholder="e.g. 奈良市" value={newLoc.kanji} onChange={e => setNewLoc({ ...newLoc, kanji: e.target.value })} className="onyx-input" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Budget (JPY)</label>
-                  <input type="number" value={newLoc.budget} onChange={e => setNewLoc({...newLoc, budget: parseInt(e.target.value) || 0})} className="onyx-input" />
+                  <input type="number" value={newLoc.budget} onChange={e => setNewLoc({ ...newLoc, budget: parseInt(e.target.value) || 0 })} className="onyx-input" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Category</label>
                   <div className="relative">
-                    <select value={newLoc.category} onChange={e => setNewLoc({...newLoc, category: e.target.value})} className="onyx-input appearance-none">
+                    <select value={newLoc.category} onChange={e => setNewLoc({ ...newLoc, category: e.target.value })} className="onyx-input appearance-none">
                       <option>Urban</option>
                       <option>Nature</option>
                       <option>Historical</option>
@@ -241,11 +247,11 @@ export default function App() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Priority (2-5)</label>
-                  <input type="number" min="2" max="5" value={newLoc.priority} onChange={e => setNewLoc({...newLoc, priority: parseInt(e.target.value) || 5})} className="onyx-input" />
+                  <input type="number" min="2" max="5" value={newLoc.priority} onChange={e => setNewLoc({ ...newLoc, priority: parseInt(e.target.value) || 5 })} className="onyx-input" />
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={handleAddLocation}
                 className="h-14 bg-[#C084FC] text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-[#D4A5FF] transition-colors"
               >
