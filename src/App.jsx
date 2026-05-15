@@ -23,10 +23,10 @@ const INITIAL_LOCATIONS = [
 ];
 
 const PRIORITY_COLORS = {
-  5: 'bg-[#C084FC]/10 text-[#C084FC] border border-[#C084FC]/30',
-  4: 'bg-violet-950/40 text-violet-300/60 border border-violet-900/30',
-  3: 'bg-indigo-950/40 text-indigo-300/60 border border-indigo-900/30',
-  2: 'bg-slate-950/40 text-slate-300/60 border border-slate-900/30',
+  5: 'bg-[#FFC107]/10 text-[#FFC107] border border-[#FFC107]/30',
+  4: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
+  3: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
+  2: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
   1: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
 };
 
@@ -75,7 +75,6 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('onyx_itinerary_locations', JSON.stringify(locations));
-    // FIXED: Renamed telemetry key to avoid collision with Onyx Signal
     localStorage.setItem('onyx_itinerary_node_count', locations.length.toString()); 
   }, [locations]);
 
@@ -117,38 +116,37 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-[#C084FC]/30 pb-20 overscroll-none">
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-[#FFC107]/30 pb-20 overscroll-none">
       <div className="max-w-md mx-auto p-6">
         <header className="flex justify-between items-center py-6">
-          <div className="flex items-center gap-2"><div className="w-1.5 h-6 bg-[#C084FC]" /><h1 className="text-xl font-black uppercase tracking-tighter">Onyx Itinerary</h1></div>
+          <div className="flex items-center gap-2"><div className="w-1.5 h-6 bg-[#FFC107]" /><h1 className="text-xl font-black uppercase tracking-tighter">Onyx Itinerary</h1></div>
           <div className="flex gap-2">
-            <button onClick={() => { triggerHaptic(); navigator.clipboard.writeText(localStorage.getItem('onyx_itinerary_locations')); alert("EXPORTED."); }} className="p-2 border border-white/10 rounded-xl hover:bg-[#C084FC]/20 transition-colors"><TrendingUp className="w-5 h-5 text-[#C084FC]" /></button>
-            <button onClick={() => { triggerHaptic(); setIsAdding(true); }} className="p-2 bg-[#C084FC] rounded-xl hover:bg-[#C084FC]/80 transition-colors"><Plus className="w-5 h-5 text-black" /></button>
+            <button onClick={() => { triggerHaptic(); navigator.clipboard.writeText(localStorage.getItem('onyx_itinerary_locations')); alert("EXPORTED."); }} className="p-2 border border-white/10 rounded-xl hover:bg-[#FFC107]/20 transition-colors"><TrendingUp className="w-5 h-5 text-[#FFC107]" /></button>
+            <button onClick={() => { triggerHaptic(); setIsAdding(true); }} className="p-2 bg-[#FFC107] rounded-xl hover:bg-[#FFC107]/80 transition-colors"><Plus className="w-5 h-5 text-black" /></button>
           </div>
         </header>
 
-        <section className="mt-4 mb-10 relative overflow-hidden onyx-card p-8 border-[#C084FC]/10">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#C084FC]/5 blur-3xl -mr-16 -mt-16 rounded-full" />
-          <span className="text-[10px] font-bold text-[#C084FC] uppercase tracking-[0.4em] block mb-4">Tokyo // JST</span>
+        <section className="mt-4 mb-10 relative overflow-hidden onyx-card p-8 border-[#FFC107]/10">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFC107]/5 blur-3xl -mr-16 -mt-16 rounded-full" />
+          <span className="text-[10px] font-bold text-[#FFC107] uppercase tracking-[0.4em] block mb-4">Tokyo // JST</span>
           <div className="text-6xl font-black tabular-nums tracking-tighter mb-2">{tokyoTime}</div>
           <div className="flex justify-between items-end">
             <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Destination // <span className="text-white">Japan</span></div>
-            <div className="text-right"><span className="text-[10px] font-bold text-zinc-600 uppercase block mb-1">Progress</span><span className="text-lg font-black text-[#C084FC]">{visitedCount}/{locations.length}</span></div>
+            <div className="text-right"><span className="text-[10px] font-bold text-zinc-600 uppercase block mb-1">Progress</span><span className="text-lg font-black text-[#FFC107]">{visitedCount}/{locations.length}</span></div>
           </div>
         </section>
 
         <div className="space-y-4 mb-8">
-          <div className="relative"><Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={16} /><input type="text" placeholder="SEARCH DESTINATIONS..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-zinc-900/50 border border-zinc-900 w-full p-4 pl-12 rounded-lg text-xs font-bold tracking-widest focus:outline-none focus:border-[#C084FC] transition-colors" /></div>
+          <div className="relative"><Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={16} /><input type="text" placeholder="SEARCH DESTINATIONS..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-zinc-900/50 border border-zinc-900 w-full p-4 pl-12 rounded-lg text-xs font-bold tracking-widest focus:outline-none focus:border-[#FFC107] transition-colors" /></div>
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
-            {/* FIXED: Priority filter now includes '1' */}
             {[0, 5, 4, 3, 2, 1].map(p => (
-              <button key={p} onClick={() => { triggerHaptic(); setFilterPriority(p); }} className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest border whitespace-nowrap transition-all ${filterPriority === p ? 'bg-[#C084FC] border-[#C084FC] text-black' : 'border-zinc-900 text-zinc-600'}`}>{p === 0 ? 'All' : `${p}/5 Priority`}</button>
+              <button key={p} onClick={() => { triggerHaptic(); setFilterPriority(p); }} className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest border whitespace-nowrap transition-all ${filterPriority === p ? 'bg-[#FFC107] border-[#FFC107] text-black' : 'border-zinc-900 text-zinc-600'}`}>{p === 0 ? 'All' : `${p}/5 Priority`}</button>
             ))}
           </div>
         </div>
 
         <div className="onyx-card p-6 mb-10 bg-gradient-to-br from-zinc-900/50 to-transparent flex justify-between items-center">
-          <div><span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest block mb-1">Total Cost</span><div className="text-2xl font-black tabular-nums text-[#C084FC]">¥{totalBudget.toLocaleString()}</div></div>
+          <div><span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest block mb-1">Total Cost</span><div className="text-2xl font-black tabular-nums text-[#FFC107]">¥{totalBudget.toLocaleString()}</div></div>
           <TrendingUp size={32} className="text-zinc-800" />
         </div>
 
@@ -156,11 +154,11 @@ export default function App() {
           <div className="absolute left-[1.125rem] top-0 bottom-0 w-[1px] bg-zinc-900" />
           {filteredLocations.map((loc, idx) => (
             <motion.div key={loc.city} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.03 }} className="relative pl-12">
-              <div className="absolute left-[-1.125rem] top-2 z-10"><div className={`w-3 h-3 rounded-full border-2 border-black transition-colors ${visited[loc.city] ? 'bg-[#C084FC]' : 'bg-zinc-800'}`} /></div>
-              <div className={`onyx-card p-5 transition-all group ${visited[loc.city] ? 'opacity-40 border-dashed' : 'hover:border-[#C084FC]/30'}`}>
+              <div className="absolute left-[-1.125rem] top-2 z-10"><div className={`w-3 h-3 rounded-full border-2 border-black transition-colors ${visited[loc.city] ? 'bg-[#FFC107]' : 'bg-zinc-800'}`} /></div>
+              <div className={`onyx-card p-5 transition-all group ${visited[loc.city] ? 'opacity-40 border-dashed' : 'hover:border-[#FFC107]/30'}`}>
                 <div className="flex justify-between items-start mb-2">
                   <div onDoubleClick={() => handleDelete(loc.city)}><h3 className="text-lg font-black uppercase tracking-tighter leading-none mb-1">{loc.city}</h3><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{loc.kanji}</p></div>
-                  <button onClick={() => toggleVisited(loc.city)}>{visited[loc.city] ? <CheckCircle2 size={24} className="text-[#C084FC]" /> : <Circle size={24} className="text-zinc-900 group-hover:text-zinc-700" />}</button>
+                  <button onClick={() => toggleVisited(loc.city)}>{visited[loc.city] ? <CheckCircle2 size={24} className="text-[#FFC107]" /> : <Circle size={24} className="text-zinc-900 group-hover:text-zinc-700" />}</button>
                 </div>
                 <div className="flex items-center gap-4 mt-4">
                   <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900 rounded text-[9px] font-bold uppercase text-zinc-400"><Landmark size={10} /> {loc.category}</div>
@@ -183,7 +181,7 @@ export default function App() {
                 <div className="space-y-2"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Category</label><div className="relative"><select value={newLoc.category} onChange={e => setNewLoc({ ...newLoc, category: e.target.value })} className="onyx-input appearance-none"><option>Urban</option><option>Nature</option><option>Historical</option><option>Entertainment</option></select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-600"><ChevronDown size={14} /></div></div></div>
                 <div className="space-y-2"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Priority</label><input type="number" min="1" max="5" value={newLoc.priority} onChange={e => setNewLoc({ ...newLoc, priority: parseInt(e.target.value) || 5 })} className="onyx-input" /></div>
               </div>
-              <button onClick={handleAddLocation} className="h-16 bg-[#C084FC] text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-[#D4A5FF] transition-all active:scale-95 mb-6">Execute Protocol</button>
+              <button onClick={handleAddLocation} className="h-16 bg-[#FFC107] text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-[#FFD54F] transition-all active:scale-95 mb-6">Execute Protocol</button>
             </motion.div>
           )}
         </AnimatePresence>
