@@ -163,7 +163,7 @@ export default function App() {
                 <div className="flex items-center gap-4 mt-4">
                   <div className="flex items-center gap-1.5 px-2 py-1 bg-g-bg rounded-md text-[10px] font-bold uppercase text-g-text-variant"><Landmark size={12} /> {loc.category}</div>
                   <div className="text-[11px] font-bold text-g-text tabular-nums">¥{loc.budget.toLocaleString()}</div>
-                  <div className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors ${PRIORITY_COLORS[loc.priority] || 'bg-g-aluminium text-g-text-variant'}`}>{loc.priority}/5</div>
+                  <div className={`ml-auto text-[10px] font-bold px-3 py-1 rounded-full flex items-center justify-center transition-colors ${PRIORITY_COLORS[loc.priority] || 'bg-g-aluminium text-g-text-variant'}`}>{loc.priority}/5</div>
                 </div>
               </div>
             </motion.div>
