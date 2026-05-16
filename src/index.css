@@ -1,105 +1,72 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-onyx-bg: #000000;
-  --color-onyx-card: #0A0A0A;
-  --color-onyx-border: rgba(255, 255, 255, 0.08);
-  --color-onyx-purple: #C084FC;
-  --color-onyx-purple-glow: rgba(192, 132, 252, 0.25);
-  --color-onyx-text: #FFFFFF;
-  --color-onyx-muted: #71717A;
-  
-  --font-sans: "Inter", -apple-system, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-  
-  --radius-onyx: 0.5rem;
+  --color-g-bg: #F0F4F8;
+  --color-g-surface: #FFFFFF;
+  --color-g-primary: #0B57D0;
+  --color-g-primary-container: #D3E3FD;
+  --color-g-text: #1F1F1F;
+  --color-g-text-variant: #444746;
+  --color-g-outline: #C4C7C5;
+  --color-g-aluminium: #E8EAED;
+
+  --font-sans: 'DM Sans', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+
+  --shadow-elevation-1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --shadow-elevation-2: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --shadow-elevation-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
 }
 
 @layer base {
   body {
-    background-color: var(--color-onyx-bg);
-    color: var(--color-onyx-text);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    overscroll-behavior: none;
-    letter-spacing: -0.02em;
+    @apply bg-g-bg text-g-text font-sans antialiased;
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
 @layer components {
-  .onyx-card {
-    background-color: var(--color-onyx-card);
-    border: 1px solid var(--color-onyx-border);
-    border-radius: var(--radius-onyx);
+  .material-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0,0,0,0.03);
   }
 
-  .onyx-button-primary {
-    background: #C084FC;
-    color: #000000;
-    font-weight: 800;
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius-onyx);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.75rem;
+  .ripple {
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
   }
-
-  .onyx-input {
-    background-color: var(--color-onyx-card);
-    border: 1px solid var(--color-onyx-border);
-    color: white;
+  .ripple::after {
+    content: "";
+    display: block;
+    position: absolute;
     width: 100%;
-    padding: 0.875rem 1rem;
-    border-radius: var(--radius-onyx);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    outline: none;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform .5s, opacity 1s;
   }
-
-  .onyx-input:focus {
-    border-color: var(--color-onyx-purple);
-    box-shadow: 0 0 15px var(--color-onyx-purple-glow);
+  .ripple:active::after {
+    transform: scale(0, 0);
+    opacity: .1;
+    transition: 0s;
   }
-
-  .onyx-input::placeholder {
-    color: #3F3F46;
-  }
-}
-
-.timeline-line {
-  position: absolute;
-  left: 1.5rem;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--color-onyx-purple), transparent);
-  opacity: 0.3;
-}
-
-.timeline-dot {
-  width: 12px;
-  height: 12px;
-  background: var(--color-onyx-bg);
-  border: 2px solid var(--color-onyx-purple);
-  border-radius: 50%;
-  position: relative;
-  z-index: 10;
-  box-shadow: 0 0 10px var(--color-onyx-purple-glow);
-}
-
-.mono-number {
-  font-family: var(--font-mono);
-}
-
-::-webkit-scrollbar {
-  display: none;
 }

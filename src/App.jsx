@@ -23,11 +23,11 @@ const INITIAL_LOCATIONS = [
 ];
 
 const PRIORITY_COLORS = {
-  5: 'bg-[#FFC107]/10 text-[#FFC107] border border-[#FFC107]/30',
-  4: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
-  3: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
-  2: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
-  1: 'bg-zinc-950/40 text-zinc-300/60 border border-zinc-900/30',
+  5: 'bg-g-primary-container text-g-primary border border-g-primary/20',
+  4: 'bg-g-aluminium text-g-text-variant border border-g-outline/20',
+  3: 'bg-g-aluminium text-g-text-variant border border-g-outline/20',
+  2: 'bg-g-aluminium text-g-text-variant border border-g-outline/20',
+  1: 'bg-g-aluminium text-g-text-variant border border-g-outline/20',
 };
 
 const triggerHaptic = (type = 'light') => {
@@ -116,54 +116,54 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-[#FFC107]/30 pb-20 overscroll-none">
+    <div className="min-h-screen bg-g-bg text-g-text font-sans selection:bg-g-primary-container pb-20 overscroll-none">
       <div className="max-w-md mx-auto p-6">
         <header className="flex justify-between items-center py-6">
-          <div className="flex items-center gap-2"><div className="w-1.5 h-6 bg-[#FFC107]" /><h1 className="text-xl font-black uppercase tracking-tighter">Onyx Itinerary</h1></div>
+          <div className="flex items-center gap-2"><div className="w-1.5 h-6 bg-g-primary rounded-full" /><h1 className="text-xl font-bold uppercase tracking-tight">Itinerary Command</h1></div>
           <div className="flex gap-2">
-            <button onClick={() => { triggerHaptic(); navigator.clipboard.writeText(localStorage.getItem('onyx_itinerary_locations')); alert("EXPORTED."); }} className="p-2 border border-white/10 rounded-xl hover:bg-[#FFC107]/20 transition-colors"><TrendingUp className="w-5 h-5 text-[#FFC107]" /></button>
-            <button onClick={() => { triggerHaptic(); setIsAdding(true); }} className="p-2 bg-[#FFC107] rounded-xl hover:bg-[#FFC107]/80 transition-colors"><Plus className="w-5 h-5 text-black" /></button>
+            <button onClick={() => { triggerHaptic(); navigator.clipboard.writeText(localStorage.getItem('onyx_itinerary_locations')); alert("EXPORTED."); }} className="p-3 bg-g-surface border border-g-outline/20 rounded-xl hover:bg-g-aluminium transition-colors shadow-elevation-1 ripple"><TrendingUp className="w-5 h-5 text-g-primary" /></button>
+            <button onClick={() => { triggerHaptic(); setIsAdding(true); }} className="p-3 bg-g-primary rounded-xl hover:bg-blue-700 transition-colors shadow-elevation-2 ripple"><Plus className="w-5 h-5 text-white" /></button>
           </div>
         </header>
 
-        <section className="mt-4 mb-10 relative overflow-hidden onyx-card p-8 border-[#FFC107]/10">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFC107]/5 blur-3xl -mr-16 -mt-16 rounded-full" />
-          <span className="text-[10px] font-bold text-[#FFC107] uppercase tracking-[0.4em] block mb-4">Tokyo // JST</span>
-          <div className="text-6xl font-black tabular-nums tracking-tighter mb-2">{tokyoTime}</div>
+        <section className="mt-4 mb-10 relative overflow-hidden material-card p-8 border-g-primary/10 shadow-elevation-2">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-g-primary/5 blur-3xl -mr-16 -mt-16 rounded-full" />
+          <span className="text-[10px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-4">Tokyo // JST</span>
+          <div className="text-5xl font-bold tabular-nums tracking-tighter mb-2">{tokyoTime}</div>
           <div className="flex justify-between items-end">
-            <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Destination // <span className="text-white">Japan</span></div>
-            <div className="text-right"><span className="text-[10px] font-bold text-zinc-600 uppercase block mb-1">Progress</span><span className="text-lg font-black text-[#FFC107]">{visitedCount}/{locations.length}</span></div>
+            <div className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest">Destination // <span className="text-g-text">Japan</span></div>
+            <div className="text-right"><span className="text-[10px] font-bold text-g-text-variant uppercase block mb-1">Progress</span><span className="text-lg font-bold text-g-primary">{visitedCount}/{locations.length}</span></div>
           </div>
         </section>
 
         <div className="space-y-4 mb-8">
-          <div className="relative"><Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={16} /><input type="text" placeholder="SEARCH DESTINATIONS..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-zinc-900/50 border border-zinc-900 w-full p-4 pl-12 rounded-lg text-xs font-bold tracking-widest focus:outline-none focus:border-[#FFC107] transition-colors" /></div>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+          <div className="relative"><Search className="absolute left-4 top-1/2 -translate-y-1/2 text-g-text-variant" size={18} /><input type="text" placeholder="Search destinations..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-g-surface border border-g-outline/20 shadow-elevation-1 w-full p-4 pl-12 rounded-xl text-sm font-medium focus:outline-none focus:border-g-primary transition-colors" /></div>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
             {[0, 5, 4, 3, 2, 1].map(p => (
-              <button key={p} onClick={() => { triggerHaptic(); setFilterPriority(p); }} className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest border whitespace-nowrap transition-all ${filterPriority === p ? 'bg-[#FFC107] border-[#FFC107] text-black' : 'border-zinc-900 text-zinc-600'}`}>{p === 0 ? 'All' : `${p}/5 Priority`}</button>
+              <button key={p} onClick={() => { triggerHaptic(); setFilterPriority(p); }} className={`px-5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm ripple ${filterPriority === p ? 'bg-g-primary border border-g-primary text-white shadow-elevation-1' : 'bg-g-surface border border-g-outline/20 text-g-text-variant hover:bg-g-aluminium'}`}>{p === 0 ? 'All' : `${p}/5 Priority`}</button>
             ))}
           </div>
         </div>
 
-        <div className="onyx-card p-6 mb-10 bg-gradient-to-br from-zinc-900/50 to-transparent flex justify-between items-center">
-          <div><span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest block mb-1">Total Cost</span><div className="text-2xl font-black tabular-nums text-[#FFC107]">¥{totalBudget.toLocaleString()}</div></div>
-          <TrendingUp size={32} className="text-zinc-800" />
+        <div className="material-card p-6 mb-10 shadow-elevation-1 flex justify-between items-center">
+          <div><span className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest block mb-1">Total Cost</span><div className="text-2xl font-bold tabular-nums text-g-primary">¥{totalBudget.toLocaleString()}</div></div>
+          <TrendingUp size={32} className="text-g-primary/20" />
         </div>
 
-        <div className="space-y-8 relative">
-          <div className="absolute left-[1.125rem] top-0 bottom-0 w-[1px] bg-zinc-900" />
+        <div className="space-y-6 relative">
+          <div className="absolute left-[1.125rem] top-0 bottom-0 w-[2px] bg-g-outline/20" />
           {filteredLocations.map((loc, idx) => (
             <motion.div key={loc.city} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.03 }} className="relative pl-12">
-              <div className="absolute left-[-1.125rem] top-2 z-10"><div className={`w-3 h-3 rounded-full border-2 border-black transition-colors ${visited[loc.city] ? 'bg-[#FFC107]' : 'bg-zinc-800'}`} /></div>
-              <div className={`onyx-card p-5 transition-all group ${visited[loc.city] ? 'opacity-40 border-dashed' : 'hover:border-[#FFC107]/30'}`}>
+              <div className="absolute left-[-1.125rem] top-4 z-10"><div className={`w-3.5 h-3.5 rounded-full border-2 border-g-bg transition-colors ${visited[loc.city] ? 'bg-g-primary' : 'bg-g-outline'}`} /></div>
+              <div className={`material-card p-5 transition-all shadow-elevation-1 ripple group ${visited[loc.city] ? 'opacity-50 border-dashed bg-g-bg/50' : 'hover:border-g-primary/30'}`}>
                 <div className="flex justify-between items-start mb-2">
-                  <div onDoubleClick={() => handleDelete(loc.city)}><h3 className="text-lg font-black uppercase tracking-tighter leading-none mb-1">{loc.city}</h3><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{loc.kanji}</p></div>
-                  <button onClick={() => toggleVisited(loc.city)}>{visited[loc.city] ? <CheckCircle2 size={24} className="text-[#FFC107]" /> : <Circle size={24} className="text-zinc-900 group-hover:text-zinc-700" />}</button>
+                  <div onDoubleClick={() => handleDelete(loc.city)}><h3 className="text-lg font-bold tracking-tight leading-none mb-1">{loc.city}</h3><p className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider">{loc.kanji}</p></div>
+                  <button onClick={() => toggleVisited(loc.city)} className="active:scale-90 transition-transform">{visited[loc.city] ? <CheckCircle2 size={24} className="text-g-primary" /> : <Circle size={24} className="text-g-outline group-hover:text-g-primary/50" />}</button>
                 </div>
                 <div className="flex items-center gap-4 mt-4">
-                  <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900 rounded text-[9px] font-bold uppercase text-zinc-400"><Landmark size={10} /> {loc.category}</div>
-                  <div className="text-[10px] font-black text-white tabular-nums">¥{loc.budget.toLocaleString()}</div>
-                  <div className={`ml-auto text-[9px] font-black px-2 py-0.5 rounded transition-colors ${PRIORITY_COLORS[loc.priority] || 'bg-zinc-900 text-zinc-600'}`}>{loc.priority}/5</div>
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-g-bg rounded-md text-[10px] font-bold uppercase text-g-text-variant"><Landmark size={12} /> {loc.category}</div>
+                  <div className="text-[11px] font-bold text-g-text tabular-nums">¥{loc.budget.toLocaleString()}</div>
+                  <div className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors ${PRIORITY_COLORS[loc.priority] || 'bg-g-aluminium text-g-text-variant'}`}>{loc.priority}/5</div>
                 </div>
               </div>
             </motion.div>
@@ -172,16 +172,18 @@ export default function App() {
 
         <AnimatePresence>
           {isAdding && (
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed inset-0 z-50 bg-black p-8 flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-              <div className="flex justify-between items-center mb-12 pt-4"><h3 className="text-2xl font-black uppercase tracking-tighter">Add Destination</h3><button onClick={() => { triggerHaptic(); setIsAdding(false); }} className="text-zinc-600"><X size={32} /></button></div>
-              <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pb-10">
-                <div className="space-y-2"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">City Name</label><input type="text" value={newLoc.city} onChange={e => setNewLoc({ ...newLoc, city: e.target.value })} className="onyx-input" /></div>
-                <div className="space-y-2"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Kanji</label><input type="text" value={newLoc.kanji} onChange={e => setNewLoc({ ...newLoc, kanji: e.target.value })} className="onyx-input" /></div>
-                <div className="space-y-2"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Budget</label><input type="number" value={newLoc.budget} onChange={e => setNewLoc({ ...newLoc, budget: parseInt(e.target.value) || 0 })} className="onyx-input" /></div>
-                <div className="space-y-2"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Category</label><div className="relative"><select value={newLoc.category} onChange={e => setNewLoc({ ...newLoc, category: e.target.value })} className="onyx-input appearance-none"><option>Urban</option><option>Nature</option><option>Historical</option><option>Entertainment</option></select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-600"><ChevronDown size={14} /></div></div></div>
-                <div className="space-y-2"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Priority</label><input type="number" min="1" max="5" value={newLoc.priority} onChange={e => setNewLoc({ ...newLoc, priority: parseInt(e.target.value) || 5 })} className="onyx-input" /></div>
+            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed inset-0 z-50 bg-g-surface flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] shadow-elevation-3">
+              <div className="flex justify-between items-center mb-8 pt-8 px-8"><h3 className="text-2xl font-bold tracking-tight text-g-text">Add Destination</h3><button onClick={() => { triggerHaptic(); setIsAdding(false); }} className="w-10 h-10 bg-g-aluminium rounded-full flex items-center justify-center text-g-text ripple"><X size={20} /></button></div>
+              <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pb-10 px-8">
+                <div className="space-y-2"><label className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider ml-1">City Name</label><input type="text" value={newLoc.city} onChange={e => setNewLoc({ ...newLoc, city: e.target.value })} className="w-full py-4 px-5 bg-g-bg border border-g-outline/20 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" /></div>
+                <div className="space-y-2"><label className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider ml-1">Kanji</label><input type="text" value={newLoc.kanji} onChange={e => setNewLoc({ ...newLoc, kanji: e.target.value })} className="w-full py-4 px-5 bg-g-bg border border-g-outline/20 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" /></div>
+                <div className="space-y-2"><label className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider ml-1">Budget</label><input type="number" value={newLoc.budget} onChange={e => setNewLoc({ ...newLoc, budget: parseInt(e.target.value) || 0 })} className="w-full py-4 px-5 bg-g-bg border border-g-outline/20 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" /></div>
+                <div className="space-y-2"><label className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider ml-1">Category</label><div className="relative"><select value={newLoc.category} onChange={e => setNewLoc({ ...newLoc, category: e.target.value })} className="w-full py-4 px-5 bg-g-bg border border-g-outline/20 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors appearance-none"><option>Urban</option><option>Nature</option><option>Historical</option><option>Entertainment</option><option>Retail</option><option>Hotel</option><option>Transit</option></select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-g-text-variant"><ChevronDown size={18} /></div></div></div>
+                <div className="space-y-2"><label className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider ml-1">Priority</label><input type="number" min="1" max="5" value={newLoc.priority} onChange={e => setNewLoc({ ...newLoc, priority: parseInt(e.target.value) || 5 })} className="w-full py-4 px-5 bg-g-bg border border-g-outline/20 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" /></div>
               </div>
-              <button onClick={handleAddLocation} className="h-16 bg-[#FFC107] text-black font-black uppercase tracking-[0.2em] text-xs hover:bg-[#FFD54F] transition-all active:scale-95 mb-6">Execute Protocol</button>
+              <div className="px-8 mb-8">
+                 <button onClick={handleAddLocation} className="w-full h-16 bg-g-primary text-white font-bold rounded-2xl shadow-elevation-2 hover:bg-blue-700 transition-all active:scale-95 ripple flex items-center justify-center">Add to Timeline</button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
