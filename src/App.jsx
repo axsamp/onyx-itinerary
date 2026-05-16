@@ -49,7 +49,6 @@ export default function App() {
     return merged;
   });
   const [search, setSearch] = useState('');
-  const [filterPriority, setFilterPriority] = useState(0);
   const [visited, setVisited] = useState(() => {
     const saved = localStorage.getItem('onyx_itinerary_visited');
     return saved ? JSON.parse(saved) : {};
@@ -88,9 +87,8 @@ export default function App() {
   }).format(time), [time]);
 
   const filteredLocations = useMemo(() => locations.filter(loc =>
-    (loc.city.toLowerCase().includes(search.toLowerCase()) || loc.kanji.includes(search)) &&
-    (filterPriority === 0 || loc.priority === filterPriority)
-  ), [locations, search, filterPriority]);
+    (loc.city.toLowerCase().includes(search.toLowerCase()) || loc.kanji.includes(search))
+  ), [locations, search]);
 
   const totalBudget = useMemo(() => filteredLocations.reduce((acc, loc) => acc + (visited[loc.city] ? 0 : loc.budget), 0), [filteredLocations, visited]);
   const visitedCount = useMemo(() => Object.values(visited).filter(v => v).length, [visited]);
@@ -138,11 +136,6 @@ export default function App() {
 
         <div className="space-y-4 mb-8">
           <div className="relative"><Search className="absolute left-4 top-1/2 -translate-y-1/2 text-g-text-variant" size={18} /><input type="text" placeholder="Search destinations..." value={search} onChange={(e) => setSearch(e.target.value)} className="bg-g-surface border border-g-outline/20 shadow-elevation-1 w-full p-4 pl-12 rounded-xl text-sm font-medium focus:outline-none focus:border-g-primary transition-colors" /></div>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-            {[0, 5, 4, 3, 2, 1].map(p => (
-              <button key={p} onClick={() => { triggerHaptic(); setFilterPriority(p); }} className={`px-5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm ripple ${filterPriority === p ? 'bg-g-primary border border-g-primary text-white shadow-elevation-1' : 'bg-g-surface border border-g-outline/20 text-g-text-variant hover:bg-g-aluminium'}`}>{p === 0 ? 'All' : `${p}/5 Priority`}</button>
-            ))}
-          </div>
         </div>
 
         <div className="material-card p-6 mb-10 shadow-elevation-1 flex justify-between items-center">
