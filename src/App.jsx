@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Clock, Search, Filter, CheckCircle2, Circle, TrendingUp, Landmark, Plus, X, ChevronDown, Trash2 } from 'lucide-react';
+import { MapPin, Clock, Search, Filter, CheckCircle2, Circle, TrendingUp, Landmark, Plus, X, ChevronDown, Trash2, ArrowUpRight } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -256,6 +256,16 @@ export default function App() {
                     <p className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider">{loc.kanji}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.city + (loc.kanji ? ' ' + loc.kanji : ''))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => triggerHaptic('medium')}
+                      className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary hover:bg-g-primary-container transition-all cursor-pointer"
+                      title="View in Google Maps"
+                    >
+                      <ArrowUpRight size={18} />
+                    </a>
                     <button 
                       onClick={() => toggleVisited(loc.city)} 
                       className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-colors cursor-pointer"
