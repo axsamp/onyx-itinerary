@@ -59,21 +59,50 @@ function LatticeMapCanvas({ locations, visited }) {
     canvas.height = 160 * dpr;
     ctx.scale(dpr, dpr);
 
-    const nodes = locations.map((loc, idx) => {
+    // Compute the dynamic sliding window of 5 nodes representing the active travel progress
+    const firstUnvisitedIdx = locations.findIndex(loc => !visited[loc.city]);
+    const startIndex = Math.max(0, (firstUnvisitedIdx === -1 ? locations.length : firstUnvisitedIdx) - 1);
+    const adjustedStart = Math.max(0, Math.min(startIndex, locations.length - 5));
+    const activeLocations = locations.length <= 5 
+      ? locations 
+      : locations.slice(adjustedStart, adjustedStart + 5);
+
+    // Friendly Material 3 short name formatter to prevent horizontal crowded pings
+    const getShortName = (city) => {
+      let name = city;
+      if (name.includes(' - ')) {
+        name = name.split(' - ')[0];
+      }
+      const words = name.split(' ');
+      if (words.length > 2) {
+        name = words.slice(0, 2).join(' ');
+      }
+      if (name.length > 12) {
+        name = name.slice(0, 11) + '…';
+      }
+      return name;
+    };
+
+    if (activeLocations.length === 0) {
+      ctx.clearRect(0, 0, rect.width, 160);
+      return;
+    }
+
+    const nodes = activeLocations.map((loc, idx) => {
       let hash = 0;
       for (let i = 0; i < loc.city.length; i++) {
         hash = loc.city.charCodeAt(i) + ((hash << 5) - hash);
       }
-      const segmentWidth = (rect.width - 60) / Math.max(1, locations.length - 1);
-      const x = 30 + (idx * segmentWidth) + (Math.abs(hash % 10) - 5);
+      const segmentWidth = (rect.width - 60) / Math.max(1, activeLocations.length - 1);
+      const x = 30 + (idx * segmentWidth) + (Math.abs(hash % 8) - 4);
       
       const verticalTiers = [45, 80, 115];
       const tierIndex = idx % 3;
-      const y = verticalTiers[tierIndex] + (Math.abs(hash % 12) - 6);
+      const y = verticalTiers[tierIndex] + (Math.abs(hash % 10) - 5);
 
       return {
         id: loc.city,
-        name: loc.city.split(' ')[0],
+        name: getShortName(loc.city),
         x,
         y,
         tierIndex,
