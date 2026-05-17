@@ -127,11 +127,14 @@ function LatticeMapCanvas({ locations, visited }) {
 
           const isLineActive = from.visited && !to.visited;
           if (isLineActive) {
-            const progress = (pulse * 0.2 + (i * 0.15)) % 1;
+            const progress = (pulse * 0.05 + (i * 0.15)) % 1;
             const px = from.x + (to.x - from.x) * progress;
             const py = from.y + (to.y - from.y) * progress;
             
-            ctx.fillStyle = document.documentElement.classList.contains('dark') ? '#8AB4F8' : '#0B57D0';
+            const opacity = 1 - Math.pow(progress - 0.5, 2) * 4;
+            ctx.fillStyle = document.documentElement.classList.contains('dark') 
+              ? `rgba(138, 180, 248, ${opacity})` 
+              : `rgba(11, 87, 208, ${opacity})`;
             ctx.shadowColor = ctx.fillStyle;
             ctx.shadowBlur = 6;
             ctx.beginPath();
@@ -143,14 +146,13 @@ function LatticeMapCanvas({ locations, visited }) {
       }
 
       nodes.forEach(node => {
-        const glow = Math.abs(Math.sin(pulse + node.x * 0.05)) * 4 + 2;
-
-        ctx.fillStyle = node.visited 
-          ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.15)' : 'rgba(11, 87, 208, 0.12)')
-          : 'rgba(196, 199, 197, 0.06)';
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 6 + glow, 0, Math.PI * 2);
-        ctx.fill();
+        if (!node.visited) {
+          const glow = Math.abs(Math.sin(pulse + node.x * 0.05)) * 3 + 1;
+          ctx.fillStyle = 'rgba(196, 199, 197, 0.06)';
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, 6 + glow, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
         ctx.fillStyle = node.visited 
           ? (document.documentElement.classList.contains('dark') ? '#8AB4F8' : '#0B57D0')
@@ -159,13 +161,11 @@ function LatticeMapCanvas({ locations, visited }) {
         ctx.arc(node.x, node.y, node.visited ? 4.5 : 3.5, 0, Math.PI * 2);
         ctx.fill();
 
-        if (node.priority === 5) {
-          ctx.strokeStyle = node.visited 
-            ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.6)' : 'rgba(11, 87, 208, 0.6)')
-            : 'rgba(196, 199, 197, 0.4)';
+        if (node.priority === 5 && !node.visited) {
+          ctx.strokeStyle = 'rgba(196, 199, 197, 0.4)';
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.arc(node.x, node.y, node.visited ? 8.5 : 7.5, 0, Math.PI * 2);
+          ctx.arc(node.x, node.y, 7.5, 0, Math.PI * 2);
           ctx.stroke();
         }
 
@@ -220,6 +220,7 @@ export default function App() {
   
   const [time, setTime] = useState(new Date());
   const [isAdding, setIsAdding] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [newLoc, setNewLoc] = useState({ city: '', kanji: '', category: 'Urban', budget: 0, priority: 5 });
   const [isStealthMode, setIsStealthMode] = useState(() => localStorage.getItem('onyx_stealth_mode') === 'true');
 
@@ -334,9 +335,15 @@ export default function App() {
           <div className="flex gap-2">
             <button 
               onClick={() => { triggerHaptic(); setIsAdding(true); }} 
-              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple"
+              className="w-14 h-14 rounded-[20px] rounded-bl-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple"
             >
               <Plus className="w-6 h-6 stroke-[3]" />
+            </button>
+            <button
+              onClick={() => { triggerHaptic('medium'); setIsProfileOpen(true); }}
+              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-aluminium/50 dark:bg-g-aluminium/10 text-g-primary flex items-center justify-center font-display font-black text-sm tracking-widest hover:bg-g-primary-container hover:text-g-primary transition-all duration-300 active:scale-90 ripple shrink-0 border border-g-outline/10 shadow-sm"
+            >
+              JD
             </button>
           </div>
         </header>
@@ -375,18 +382,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Total Cost Display Card */}
-        <div className="material-card p-6 mb-8 shadow-sm flex justify-between items-center border-g-outline/10 rounded-[32px] rounded-br-[8px]">
-          <div>
-            <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest block mb-1">Pending Budget</span>
-            <div className="text-2xl font-bold tabular-nums text-g-primary font-display">
-              ¥{totalBudget.toLocaleString()}
-            </div>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-g-primary-container/40 flex items-center justify-center text-g-primary">
-            <Landmark size={22} />
-          </div>
-        </div>
+
 
         {/* Geographic Lattice Network Canvas */}
         <LatticeMapCanvas locations={filteredLocations} visited={visited} />
@@ -580,6 +576,79 @@ export default function App() {
                 </div>
               </motion.div>
             </div>
+          )}
+        </AnimatePresence>
+
+        {/* Profile Modal */}
+        <AnimatePresence>
+          {isProfileOpen && (
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end justify-center"
+              onClick={() => setIsProfileOpen(false)}
+            >
+              <motion.div 
+                initial={{ y: "100%" }} 
+                animate={{ y: 0 }} 
+                exit={{ y: "100%" }} 
+                transition={{ type: "spring", damping: 25, stiffness: 220 }}
+                className="w-full max-w-md bg-g-surface border-t border-g-outline/10 rounded-t-[40px] p-6 pb-safe relative overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Asymmetric Header Accents */}
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-g-primary via-g-primary/60 to-g-primary/10" />
+
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h2 className="text-2xl font-black tracking-tight font-display text-g-text">Agent Profile</h2>
+                    <p className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest mt-0.5">Command Telemetry</p>
+                  </div>
+                  <button 
+                    onClick={() => { triggerHaptic(); setIsProfileOpen(false); }} 
+                    className="w-8 h-8 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/10 flex items-center justify-center text-g-text-variant hover:text-g-text cursor-pointer"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Budget Telemetry Card */}
+                  <div className="material-card p-6 shadow-elevation-2 rounded-[32px] rounded-br-[8px] border-g-outline/10 bg-g-bg/50">
+                    <span className="text-[9px] font-bold text-g-text-variant uppercase tracking-[0.2em] block mb-2">Pending Mission Budget</span>
+                    <div className="text-3xl font-black tracking-tight text-g-primary font-display mb-1.5">
+                      ¥{totalBudget.toLocaleString()}
+                    </div>
+                    <p className="text-[10px] font-medium text-g-text-variant leading-relaxed">
+                      Accumulated budget of remaining unvisited destinations in your operational flight path.
+                    </p>
+                  </div>
+
+                  {/* Profile Details Card */}
+                  <div className="material-card p-5 rounded-[32px] rounded-bl-[8px] border-g-outline/10 bg-g-surface">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-[16px] rounded-bl-[6px] bg-g-primary-container text-g-primary flex items-center justify-center font-display font-black text-lg">
+                        JD
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-g-text">Agent JD</div>
+                        <div className="text-[10px] font-mono text-g-text-variant">CALLSIGN: VANGUARD-02</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-end">
+                  <button 
+                    onClick={() => { triggerHaptic(); setIsProfileOpen(false); }} 
+                    className="w-full py-4 bg-g-primary text-white dark:text-[#202124] font-bold rounded-2xl shadow-elevation-2 active:scale-95 transition-transform flex items-center justify-center ripple"
+                  >
+                    Dismiss Terminal
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
           )}
         </AnimatePresence>
 
