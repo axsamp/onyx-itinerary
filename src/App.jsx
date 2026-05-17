@@ -46,6 +46,30 @@ const triggerHaptic = (type = 'light') => {
 
 function LatticeMapCanvas({ locations, visited }) {
   const canvasRef = React.useRef(null);
+  const scrollContainerRef = React.useRef(null);
+
+  // Auto-scroll to center the active unvisited destination on mount or update
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      const container = scrollContainerRef.current;
+      if (!container || locations.length === 0) return;
+      
+      const firstUnvisitedIdx = locations.findIndex(loc => !visited[loc.city]);
+      const targetIdx = firstUnvisitedIdx === -1 ? locations.length - 1 : firstUnvisitedIdx;
+      
+      const totalWidth = Math.max(380, locations.length * 105);
+      const segmentWidth = (totalWidth - 60) / Math.max(1, locations.length - 1);
+      const x = 30 + (targetIdx * segmentWidth);
+      
+      const viewportWidth = container.clientWidth;
+      container.scrollTo({
+        left: x - viewportWidth / 2,
+        behavior: 'smooth'
+      });
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [locations, visited]);
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -54,20 +78,12 @@ function LatticeMapCanvas({ locations, visited }) {
     let animationFrameId;
 
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
+    const canvasWidth = Math.max(380, locations.length * 105);
+    canvas.width = canvasWidth * dpr;
     canvas.height = 160 * dpr;
     ctx.scale(dpr, dpr);
 
-    // Compute the dynamic sliding window of 5 nodes representing the active travel progress
-    const firstUnvisitedIdx = locations.findIndex(loc => !visited[loc.city]);
-    const startIndex = Math.max(0, (firstUnvisitedIdx === -1 ? locations.length : firstUnvisitedIdx) - 1);
-    const adjustedStart = Math.max(0, Math.min(startIndex, locations.length - 5));
-    const activeLocations = locations.length <= 5 
-      ? locations 
-      : locations.slice(adjustedStart, adjustedStart + 5);
-
-    // Friendly Material 3 short name formatter to prevent horizontal crowded pings
+    // Friendly Material 3 short name formatter to prevent horizontal crowded labels
     const getShortName = (city) => {
       let name = city;
       if (name.includes(' - ')) {
@@ -83,17 +99,17 @@ function LatticeMapCanvas({ locations, visited }) {
       return name;
     };
 
-    if (activeLocations.length === 0) {
-      ctx.clearRect(0, 0, rect.width, 160);
+    if (locations.length === 0) {
+      ctx.clearRect(0, 0, canvasWidth, 160);
       return;
     }
 
-    const nodes = activeLocations.map((loc, idx) => {
+    const nodes = locations.map((loc, idx) => {
       let hash = 0;
       for (let i = 0; i < loc.city.length; i++) {
         hash = loc.city.charCodeAt(i) + ((hash << 5) - hash);
       }
-      const segmentWidth = (rect.width - 60) / Math.max(1, activeLocations.length - 1);
+      const segmentWidth = (canvasWidth - 60) / Math.max(1, locations.length - 1);
       const x = 30 + (idx * segmentWidth) + (Math.abs(hash % 8) - 4);
       
       const verticalTiers = [45, 80, 115];
@@ -114,7 +130,7 @@ function LatticeMapCanvas({ locations, visited }) {
     let pulse = 0;
 
     const render = () => {
-      ctx.clearRect(0, 0, rect.width, 160);
+      ctx.clearRect(0, 0, canvasWidth, 160);
       pulse += 0.04;
 
       ctx.strokeStyle = document.documentElement.classList.contains('dark') 
@@ -122,7 +138,7 @@ function LatticeMapCanvas({ locations, visited }) {
         : 'rgba(11, 87, 208, 0.04)';
       ctx.lineWidth = 1;
       const gridSize = 16;
-      for (let x = 0; x < rect.width; x += gridSize) {
+      for (let x = 0; x < canvasWidth; x += gridSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, 160);
@@ -131,7 +147,7 @@ function LatticeMapCanvas({ locations, visited }) {
       for (let y = 0; y < 160; y += gridSize) {
         ctx.beginPath();
         ctx.moveTo(0, y);
-        ctx.lineTo(rect.width, y);
+        ctx.lineTo(canvasWidth, y);
         ctx.stroke();
       }
 
@@ -232,7 +248,11 @@ function LatticeMapCanvas({ locations, visited }) {
         </div>
         <span className="text-[8.5px] text-g-primary bg-g-primary-container px-2 py-0.5 rounded-full font-bold">Active Route</span>
       </div>
-      <canvas ref={canvasRef} className="w-full h-40 bg-g-bg/50 rounded-2xl border border-g-outline/5" style={{ display: 'block' }} />
+      <div ref={scrollContainerRef} className="overflow-x-auto no-scrollbar -mx-5 px-5">
+        <div style={{ width: `${Math.max(380, locations.length * 105)}px` }} className="h-40 relative">
+          <canvas ref={canvasRef} className="w-full h-full bg-g-bg/50 rounded-2xl border border-g-outline/5" style={{ display: 'block' }} />
+        </div>
+      </div>
     </div>
   );
 }
