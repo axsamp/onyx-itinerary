@@ -65,14 +65,18 @@ function LatticeMapCanvas({ locations, visited }) {
         hash = loc.city.charCodeAt(i) + ((hash << 5) - hash);
       }
       const segmentWidth = (rect.width - 60) / Math.max(1, locations.length - 1);
-      const x = 30 + (idx * segmentWidth) + (Math.abs(hash % 15) - 7.5);
-      const y = 45 + (Math.abs(hash % 65)) + (idx % 2 === 0 ? 8 : -8);
+      const x = 30 + (idx * segmentWidth) + (Math.abs(hash % 10) - 5);
+      
+      const verticalTiers = [45, 80, 115];
+      const tierIndex = idx % 3;
+      const y = verticalTiers[tierIndex] + (Math.abs(hash % 12) - 6);
 
       return {
         id: loc.city,
         name: loc.city.split(' ')[0],
         x,
         y,
+        tierIndex,
         visited: !!visited[loc.city],
         priority: loc.priority
       };
@@ -169,12 +173,15 @@ function LatticeMapCanvas({ locations, visited }) {
           ctx.stroke();
         }
 
+        const isLabelAbove = node.tierIndex !== 1;
+        const textY = isLabelAbove ? node.y - 12 : node.y + 16;
+
         ctx.fillStyle = node.visited 
           ? (document.documentElement.classList.contains('dark') ? '#E8EAED' : '#1F1F1F')
           : (document.documentElement.classList.contains('dark') ? '#9AA0A6' : '#444746');
         ctx.font = 'bold 8.5px Inter, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(node.name, node.x, node.y - 12);
+        ctx.fillText(node.name, node.x, textY);
       });
 
       animationFrameId = requestAnimationFrame(render);
