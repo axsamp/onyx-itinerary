@@ -175,7 +175,7 @@ export default function App() {
                 <div className="space-y-2"><label className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider ml-1">Priority</label><input type="number" min="1" max="5" value={newLoc.priority} onChange={e => setNewLoc({ ...newLoc, priority: parseInt(e.target.value) || 5 })} className="w-full py-4 px-5 bg-g-bg border border-g-outline/20 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" /></div>
               </div>
               <div className="px-8 mb-8">
-                 <button onClick={handleAddLocation} className="w-full h-16 bg-g-primary text-white font-bold rounded-2xl shadow-elevation-2 hover:bg-blue-700 transition-all active:scale-95 ripple flex items-center justify-center">Add to Timeline</button>
+                 <button onClick={handleAddLocation} className="w-full h-16 bg-g-primary text-white font-bold rounded-2xl shadow-elevation-2 hover:bg-blue-700 transition-colors duration-200 active:scale-95 ripple flex items-center justify-center">Add to Timeline</button>
               </div>
             </motion.div>
           )}
