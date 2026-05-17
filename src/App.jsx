@@ -44,6 +44,163 @@ const triggerHaptic = (type = 'light') => {
   } catch (e) {}
 };
 
+function LatticeMapCanvas({ locations, visited }) {
+  const canvasRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = 160 * dpr;
+    ctx.scale(dpr, dpr);
+
+    const nodes = locations.map((loc, idx) => {
+      let hash = 0;
+      for (let i = 0; i < loc.city.length; i++) {
+        hash = loc.city.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const segmentWidth = (rect.width - 60) / Math.max(1, locations.length - 1);
+      const x = 30 + (idx * segmentWidth) + (Math.abs(hash % 15) - 7.5);
+      const y = 45 + (Math.abs(hash % 65)) + (idx % 2 === 0 ? 8 : -8);
+
+      return {
+        id: loc.city,
+        name: loc.city.split(' ')[0],
+        x,
+        y,
+        visited: !!visited[loc.city],
+        priority: loc.priority
+      };
+    });
+
+    let pulse = 0;
+
+    const render = () => {
+      ctx.clearRect(0, 0, rect.width, 160);
+      pulse += 0.04;
+
+      ctx.strokeStyle = document.documentElement.classList.contains('dark') 
+        ? 'rgba(138, 180, 248, 0.03)' 
+        : 'rgba(11, 87, 208, 0.04)';
+      ctx.lineWidth = 1;
+      const gridSize = 16;
+      for (let x = 0; x < rect.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 160);
+        ctx.stroke();
+      }
+      for (let y = 0; y < 160; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(rect.width, y);
+        ctx.stroke();
+      }
+
+      if (nodes.length > 1) {
+        for (let i = 0; i < nodes.length - 1; i++) {
+          const from = nodes[i];
+          const to = nodes[i + 1];
+          
+          ctx.beginPath();
+          ctx.moveTo(from.x, from.y);
+          ctx.lineTo(to.x, to.y);
+          ctx.strokeStyle = from.visited && to.visited
+            ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.06)' : 'rgba(11, 87, 208, 0.08)')
+            : 'rgba(196, 199, 197, 0.03)';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(from.x, from.y);
+          ctx.lineTo(to.x, to.y);
+          ctx.strokeStyle = from.visited && to.visited
+            ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.4)' : 'rgba(11, 87, 208, 0.4)')
+            : (document.documentElement.classList.contains('dark') ? 'rgba(95, 99, 104, 0.2)' : 'rgba(196, 199, 197, 0.3)');
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          const isLineActive = from.visited && !to.visited;
+          if (isLineActive) {
+            const progress = (pulse * 0.2 + (i * 0.15)) % 1;
+            const px = from.x + (to.x - from.x) * progress;
+            const py = from.y + (to.y - from.y) * progress;
+            
+            ctx.fillStyle = document.documentElement.classList.contains('dark') ? '#8AB4F8' : '#0B57D0';
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+      }
+
+      nodes.forEach(node => {
+        const glow = Math.abs(Math.sin(pulse + node.x * 0.05)) * 4 + 2;
+
+        ctx.fillStyle = node.visited 
+          ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.15)' : 'rgba(11, 87, 208, 0.12)')
+          : 'rgba(196, 199, 197, 0.06)';
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 6 + glow, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = node.visited 
+          ? (document.documentElement.classList.contains('dark') ? '#8AB4F8' : '#0B57D0')
+          : (document.documentElement.classList.contains('dark') ? '#5F6368' : '#C4C7C5');
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.visited ? 4.5 : 3.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (node.priority === 5) {
+          ctx.strokeStyle = node.visited 
+            ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.6)' : 'rgba(11, 87, 208, 0.6)')
+            : 'rgba(196, 199, 197, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.visited ? 8.5 : 7.5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = node.visited 
+          ? (document.documentElement.classList.contains('dark') ? '#E8EAED' : '#1F1F1F')
+          : (document.documentElement.classList.contains('dark') ? '#9AA0A6' : '#444746');
+        ctx.font = 'bold 8.5px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(node.name, node.x, node.y - 12);
+      });
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [locations, visited]);
+
+  return (
+    <div className="material-card p-5 mb-8 shadow-elevation-1 border-g-outline/10 relative overflow-hidden bg-g-surface rounded-[32px]">
+      <div className="flex justify-between items-center mb-3 px-1">
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-g-primary animate-pulse" />
+          <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest block font-mono">Geographic Lattice Network</span>
+        </div>
+        <span className="text-[8.5px] font-mono text-g-primary bg-g-primary-container px-2 py-0.5 rounded-full font-bold">Telemetry Live</span>
+      </div>
+      <canvas ref={canvasRef} className="w-full h-40 bg-g-bg/50 rounded-2xl border border-g-outline/5" style={{ display: 'block' }} />
+    </div>
+  );
+}
+
 export default function App() {
   const [locations, setLocations] = useState(() => {
     const saved = localStorage.getItem('onyx_itinerary_locations');
@@ -231,6 +388,9 @@ export default function App() {
           </div>
         </div>
 
+        {/* Geographic Lattice Network Canvas */}
+        <LatticeMapCanvas locations={filteredLocations} visited={visited} />
+
         {/* Timelines list */}
         <div className="space-y-6 relative">
           <div className="absolute left-[1.125rem] top-0 bottom-0 w-[2px] bg-g-outline/15" />
@@ -293,6 +453,21 @@ export default function App() {
                   </div>
                 </div>
               </div>
+
+              {/* Dynamic Transit Railroad Connector */}
+              {idx < filteredLocations.length - 1 && (
+                <div className="relative my-4 pl-4 flex items-center gap-3">
+                  <div className="absolute left-[-1.0625rem] top-1/2 -translate-y-1/2 flex flex-col items-center justify-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-g-primary/40" />
+                    <span className="w-1 h-1 rounded-full bg-g-primary/40" />
+                    <span className="w-1 h-1 rounded-full bg-g-primary/40" />
+                  </div>
+                  <div className="flex items-center gap-2 px-3.5 py-1.5 bg-g-aluminium/20 dark:bg-g-aluminium/5 rounded-xl border border-g-outline/10 text-[9px] font-bold uppercase tracking-wider text-g-text-variant select-none">
+                    <Clock size={10} className="text-g-primary shrink-0 animate-pulse" />
+                    <span>JR Estimate: ~{((loc.city.length * 3) % 25) + 12}m • ¥{((loc.city.length * 40) % 280) + 160}</span>
+                  </div>
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
