@@ -192,9 +192,9 @@ function LatticeMapCanvas({ locations, visited }) {
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-g-primary animate-pulse" />
-          <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest block font-mono">Geographic Lattice Network</span>
+          <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest block">Travel Route Map</span>
         </div>
-        <span className="text-[8.5px] font-mono text-g-primary bg-g-primary-container px-2 py-0.5 rounded-full font-bold">Telemetry Live</span>
+        <span className="text-[8.5px] text-g-primary bg-g-primary-container px-2 py-0.5 rounded-full font-bold">Active Route</span>
       </div>
       <canvas ref={canvasRef} className="w-full h-40 bg-g-bg/50 rounded-2xl border border-g-outline/5" style={{ display: 'block' }} />
     </div>
@@ -328,7 +328,7 @@ export default function App() {
                 {tokyoTime.split(':').slice(0, 2).join(':')} JST
               </span>
               <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-g-text-variant">
-                Active • Node Command
+                Active • Travel Planner
               </span>
             </div>
           </div>
@@ -582,73 +582,73 @@ export default function App() {
         {/* Profile Modal */}
         <AnimatePresence>
           {isProfileOpen && (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end justify-center"
-              onClick={() => setIsProfileOpen(false)}
-            >
-              <motion.div 
-                initial={{ y: "100%" }} 
-                animate={{ y: 0 }} 
-                exit={{ y: "100%" }} 
+            <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:p-6">
+              {/* Dark Backing Blur */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsProfileOpen(false)}
+                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              />
+
+              {/* Frosted Glass Bottom Sheet Dialog */}
+              <motion.div
+                initial={{ opacity: 0, y: '100%' }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: '100%' }}
                 transition={{ type: "spring", damping: 25, stiffness: 220 }}
-                className="w-full max-w-md bg-g-surface border-t border-g-outline/10 rounded-t-[40px] p-6 pb-safe relative overflow-hidden"
+                className="relative w-full max-w-lg bg-white/70 dark:bg-g-surface/70 backdrop-blur-xl border border-g-outline/15 rounded-t-[40px] rounded-b-[24px] p-6 md:p-8 shadow-2xl flex flex-col space-y-6 z-10 max-h-[85vh] overflow-y-auto no-scrollbar transition-colors duration-700"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Asymmetric Header Accents */}
-                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-g-primary via-g-primary/60 to-g-primary/10" />
-
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h2 className="text-2xl font-black tracking-tight font-display text-g-text">Agent Profile</h2>
-                    <p className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest mt-0.5">Command Telemetry</p>
+                {/* Header status bar */}
+                <div className="w-full flex justify-between items-center border-b border-g-outline/10 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-g-primary animate-pulse" />
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-g-text-variant uppercase">Travel Profile</span>
                   </div>
-                  <button 
-                    onClick={() => { triggerHaptic(); setIsProfileOpen(false); }} 
-                    className="w-8 h-8 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/10 flex items-center justify-center text-g-text-variant hover:text-g-text cursor-pointer"
+                  <button
+                    onClick={() => { triggerHaptic('light'); setIsProfileOpen(false); }}
+                    className="w-10 h-10 flex items-center justify-center rounded-full bg-g-aluminium dark:bg-g-aluminium/10 text-g-text hover:bg-g-primary-container hover:text-g-primary transition-colors cursor-pointer"
                   >
-                    <X size={16} />
+                    <X size={20} />
                   </button>
                 </div>
 
-                <div className="space-y-4">
-                  {/* Budget Telemetry Card */}
-                  <div className="material-card p-6 shadow-elevation-2 rounded-[32px] rounded-br-[8px] border-g-outline/10 bg-g-bg/50">
-                    <span className="text-[9px] font-bold text-g-text-variant uppercase tracking-[0.2em] block mb-2">Pending Mission Budget</span>
-                    <div className="text-3xl font-black tracking-tight text-g-primary font-display mb-1.5">
+                {/* Body Content */}
+                <div className="space-y-5">
+                  {/* Traveler Details Card */}
+                  <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-[16px] rounded-bl-[6px] bg-g-primary-container text-g-primary flex items-center justify-center font-display font-black text-lg">
+                      JD
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-g-text">JD</div>
+                      <div className="text-[10px] font-medium text-g-text-variant uppercase tracking-wider">Primary Traveler</div>
+                    </div>
+                  </div>
+
+                  {/* Budget Card */}
+                  <div className="p-6 bg-g-primary-container/10 border border-g-primary/10 rounded-2xl">
+                    <span className="text-[9px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-2">Total Remaining Budget</span>
+                    <div className="text-3.5xl font-black tracking-tight text-g-primary font-display mb-1.5 leading-none">
                       ¥{totalBudget.toLocaleString()}
                     </div>
                     <p className="text-[10px] font-medium text-g-text-variant leading-relaxed">
-                      Accumulated budget of remaining unvisited destinations in your operational flight path.
+                      The sum of your planned budget for all pending (unvisited) locations on your itinerary.
                     </p>
                   </div>
-
-                  {/* Profile Details Card */}
-                  <div className="material-card p-5 rounded-[32px] rounded-bl-[8px] border-g-outline/10 bg-g-surface">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-[16px] rounded-bl-[6px] bg-g-primary-container text-g-primary flex items-center justify-center font-display font-black text-lg">
-                        JD
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold text-g-text">Agent JD</div>
-                        <div className="text-[10px] font-mono text-g-text-variant">CALLSIGN: VANGUARD-02</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
-                <div className="mt-6 flex justify-end">
-                  <button 
-                    onClick={() => { triggerHaptic(); setIsProfileOpen(false); }} 
-                    className="w-full py-4 bg-g-primary text-white dark:text-[#202124] font-bold rounded-2xl shadow-elevation-2 active:scale-95 transition-transform flex items-center justify-center ripple"
-                  >
-                    Dismiss Terminal
-                  </button>
-                </div>
+                {/* Close Button */}
+                <button
+                  onClick={() => { triggerHaptic('medium'); setIsProfileOpen(false); }}
+                  className="w-full py-4 bg-g-primary text-white dark:text-[#202124] font-bold rounded-2xl shadow-elevation-2 hover:bg-g-primary/95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 ripple mt-4"
+                >
+                  <span>Close Profile</span>
+                </button>
               </motion.div>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
