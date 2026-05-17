@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Clock, Search, Filter, CheckCircle2, Circle, TrendingUp, Landmark, Plus, X, ChevronDown, Trash2 } from 'lucide-react';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
 
 const INITIAL_LOCATIONS = [
   { city: "Montbell", kanji: "モンベル", category: "Retail", budget: 0, priority: 5, description: "Outdoor gear & apparel" },
@@ -170,18 +176,8 @@ export default function App() {
           </div>
           <div className="flex gap-2">
             <button 
-              onClick={() => { 
-                triggerHaptic(); 
-                navigator.clipboard.writeText(localStorage.getItem('onyx_itinerary_locations')); 
-                alert("Itinerary Database Exported successfully."); 
-              }} 
-              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-surface border border-g-outline/10 text-g-primary flex items-center justify-center font-display font-black text-sm hover:bg-g-primary-container transition-all duration-300 shadow-sm active:scale-95 ripple"
-            >
-              <TrendingUp className="w-5 h-5 text-g-primary" />
-            </button>
-            <button 
               onClick={() => { triggerHaptic(); setIsAdding(true); }} 
-              className="w-14 h-14 rounded-[20px] rounded-bl-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center font-display font-black text-sm hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple"
+              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple"
             >
               <Plus className="w-6 h-6 stroke-[3]" />
             </button>
@@ -189,7 +185,7 @@ export default function App() {
         </header>
 
         {/* Material 3 Expressive Core Metric Display */}
-        <section className="mt-4 mb-8 relative overflow-hidden material-card p-8 border-g-primary/10 shadow-elevation-2">
+        <section className="mt-4 mb-8 relative overflow-hidden material-card p-8 border-g-primary/10 shadow-elevation-2 rounded-[32px] rounded-bl-[8px]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-g-primary/5 blur-3xl -mr-16 -mt-16 rounded-full" />
           <span className="text-[10px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-4">Command Summary</span>
           <div className="text-5xl font-bold tabular-nums tracking-tighter mb-2 text-g-text font-display">
@@ -223,7 +219,7 @@ export default function App() {
         </div>
 
         {/* Total Cost Display Card */}
-        <div className="material-card p-6 mb-8 shadow-sm flex justify-between items-center border-g-outline/10">
+        <div className="material-card p-6 mb-8 shadow-sm flex justify-between items-center border-g-outline/10 rounded-[32px] rounded-br-[8px]">
           <div>
             <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest block mb-1">Pending Budget</span>
             <div className="text-2xl font-bold tabular-nums text-g-primary font-display">
@@ -249,8 +245,11 @@ export default function App() {
               <div className="absolute left-[-1.125rem] top-4 z-10">
                 <div className={`w-3.5 h-3.5 rounded-full border-2 border-g-bg transition-all duration-300 ${visited[loc.city] ? 'bg-g-primary scale-110 shadow-sm' : 'bg-g-outline scale-100'}`} />
               </div>
-              
-              <div className={`material-card p-5 transition-all shadow-sm ripple group ${visited[loc.city] ? 'opacity-55 border-dashed bg-g-bg/50' : 'hover:border-g-primary/30'}`}>
+              <div className={cn(
+                "material-card p-5 transition-all shadow-sm ripple group",
+                visited[loc.city] ? 'opacity-55 border-dashed bg-g-bg/50' : 'hover:border-g-primary/30',
+                idx % 2 === 0 ? "rounded-[32px] rounded-br-[8px]" : "rounded-[32px] rounded-bl-[8px]"
+              )}>
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="text-lg font-black tracking-tight leading-none mb-1.5 font-display text-g-text">{loc.city}</h3>
