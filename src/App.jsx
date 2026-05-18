@@ -8,6 +8,11 @@ import {
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+// Literal open source Material Design web components
+import '@material/web/icon/icon.js';
+import '@material/web/ripple/ripple.js';
+import '@material/web/switch/switch.js';
+
 function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
@@ -62,219 +67,6 @@ function getHaversineDistance(lat1, lon1, lat2, lon2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return R * c; // in meters
-}
-
-function LatticeMapCanvas({ locations, visited }) {
-  const canvasRef = React.useRef(null);
-  const scrollContainerRef = React.useRef(null);
-
-  // Auto-scroll to center the active unvisited destination on mount or update
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      const container = scrollContainerRef.current;
-      if (!container || locations.length === 0) return;
-      
-      const firstUnvisitedIdx = locations.findIndex(loc => !visited[loc.city]);
-      const targetIdx = firstUnvisitedIdx === -1 ? locations.length - 1 : firstUnvisitedIdx;
-      
-      const totalWidth = Math.max(380, locations.length * 105);
-      const segmentWidth = (totalWidth - 60) / Math.max(1, locations.length - 1);
-      const x = 30 + (targetIdx * segmentWidth);
-      
-      const viewportWidth = container.clientWidth;
-      container.scrollTo({
-        left: x - viewportWidth / 2,
-        behavior: 'smooth'
-      });
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, [locations, visited]);
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-
-    const dpr = window.devicePixelRatio || 1;
-    const canvasWidth = Math.max(380, locations.length * 105);
-    canvas.width = canvasWidth * dpr;
-    canvas.height = 160 * dpr;
-    ctx.scale(dpr, dpr);
-
-    // Friendly Material 3 short name formatter to prevent horizontal crowded labels
-    const getShortName = (city) => {
-      let name = city;
-      if (name.includes(' - ')) {
-        name = name.split(' - ')[0];
-      }
-      const words = name.split(' ');
-      if (words.length > 2) {
-        name = words.slice(0, 2).join(' ');
-      }
-      if (name.length > 12) {
-        name = name.slice(0, 11) + '…';
-      }
-      return name;
-    };
-
-    if (locations.length === 0) {
-      ctx.clearRect(0, 0, canvasWidth, 160);
-      return;
-    }
-
-    const nodes = locations.map((loc, idx) => {
-      let hash = 0;
-      for (let i = 0; i < loc.city.length; i++) {
-        hash = loc.city.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      const segmentWidth = (canvasWidth - 60) / Math.max(1, locations.length - 1);
-      const x = 30 + (idx * segmentWidth) + (Math.abs(hash % 8) - 4);
-      
-      const verticalTiers = [45, 80, 115];
-      const tierIndex = idx % 3;
-      const y = verticalTiers[tierIndex] + (Math.abs(hash % 10) - 5);
-
-      return {
-        id: loc.city,
-        name: getShortName(loc.city),
-        x,
-        y,
-        tierIndex,
-        visited: !!visited[loc.city],
-        priority: loc.priority
-      };
-    });
-
-    let pulse = 0;
-
-    const render = () => {
-      ctx.clearRect(0, 0, canvasWidth, 160);
-      pulse += 0.04;
-
-      ctx.strokeStyle = document.documentElement.classList.contains('dark') 
-        ? 'rgba(138, 180, 248, 0.03)' 
-        : 'rgba(11, 87, 208, 0.04)';
-      ctx.lineWidth = 1;
-      const gridSize = 16;
-      for (let x = 0; x < canvasWidth; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, 160);
-        ctx.stroke();
-      }
-      for (let y = 0; y < 160; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvasWidth, y);
-        ctx.stroke();
-      }
-
-      if (nodes.length > 1) {
-        for (let i = 0; i < nodes.length - 1; i++) {
-          const from = nodes[i];
-          const to = nodes[i + 1];
-          
-          ctx.beginPath();
-          ctx.moveTo(from.x, from.y);
-          ctx.lineTo(to.x, to.y);
-          ctx.strokeStyle = from.visited && to.visited
-            ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.06)' : 'rgba(11, 87, 208, 0.08)')
-            : 'rgba(196, 199, 197, 0.03)';
-          ctx.lineWidth = 4;
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.moveTo(from.x, from.y);
-          ctx.lineTo(to.x, to.y);
-          ctx.strokeStyle = from.visited && to.visited
-            ? (document.documentElement.classList.contains('dark') ? 'rgba(138, 180, 248, 0.4)' : 'rgba(11, 87, 208, 0.4)')
-            : (document.documentElement.classList.contains('dark') ? 'rgba(95, 99, 104, 0.2)' : 'rgba(196, 199, 197, 0.3)');
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-
-          const isLineActive = from.visited && !to.visited;
-          if (isLineActive) {
-            const progress = (pulse * 0.05 + (i * 0.15)) % 1;
-            const px = from.x + (to.x - from.x) * progress;
-            const py = from.y + (to.y - from.y) * progress;
-            
-            const opacity = 1 - Math.pow(progress - 0.5, 2) * 4;
-            ctx.fillStyle = document.documentElement.classList.contains('dark') 
-              ? `rgba(138, 180, 248, ${opacity})` 
-              : `rgba(11, 87, 208, ${opacity})`;
-            ctx.shadowColor = ctx.fillStyle;
-            ctx.shadowBlur = 6;
-            ctx.beginPath();
-            ctx.arc(px, py, 3.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-          }
-        }
-      }
-
-      nodes.forEach(node => {
-        if (!node.visited) {
-          const glow = Math.abs(Math.sin(pulse + node.x * 0.05)) * 3 + 1;
-          ctx.fillStyle = 'rgba(196, 199, 197, 0.06)';
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, 6 + glow, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        ctx.fillStyle = node.visited 
-          ? (document.documentElement.classList.contains('dark') ? '#8AB4F8' : '#0B57D0')
-          : (document.documentElement.classList.contains('dark') ? '#5F6368' : '#C4C7C5');
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.visited ? 4.5 : 3.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (node.priority === 5 && !node.visited) {
-          ctx.strokeStyle = 'rgba(196, 199, 197, 0.4)';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, 7.5, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-
-        const isLabelAbove = node.tierIndex !== 1;
-        const textY = isLabelAbove ? node.y - 12 : node.y + 16;
-
-        ctx.fillStyle = node.visited 
-          ? (document.documentElement.classList.contains('dark') ? '#E8EAED' : '#1F1F1F')
-          : (document.documentElement.classList.contains('dark') ? '#9AA0A6' : '#444746');
-        ctx.font = 'bold 8.5px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(node.name, node.x, textY);
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [locations, visited]);
-
-  return (
-    <div className="material-card p-5 mb-6 shadow-elevation-1 border-g-outline/10 relative overflow-hidden bg-g-surface rounded-[32px]">
-      <div className="flex justify-between items-center mb-3 px-1">
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-g-primary animate-pulse" />
-          <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest block">Travel Route Map</span>
-        </div>
-        <span className="text-[8.5px] text-g-primary bg-g-primary-container px-2 py-0.5 rounded-full font-bold">Active Route</span>
-      </div>
-      <div ref={scrollContainerRef} className="overflow-x-auto no-scrollbar -mx-5 px-5">
-        <div style={{ width: `${Math.max(380, locations.length * 105)}px` }} className="h-40 relative">
-          <canvas ref={canvasRef} className="w-full h-full bg-g-bg/50 rounded-2xl border border-g-outline/5" style={{ display: 'block' }} />
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default function App() {
@@ -630,28 +422,30 @@ export default function App() {
           <div className="flex gap-2">
             <button 
               onClick={() => { triggerHaptic(); setIsAdding(true); }} 
-              className="w-14 h-14 rounded-[20px] rounded-bl-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple"
+              className="w-14 h-14 rounded-[20px] rounded-bl-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple relative overflow-hidden"
             >
+              <md-ripple></md-ripple>
               <Plus className="w-6 h-6 stroke-[3]" />
             </button>
             <button
               onClick={() => { triggerHaptic('medium'); setIsProfileOpen(true); }}
-              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-aluminium/50 dark:bg-g-aluminium/10 text-g-primary flex items-center justify-center font-display font-black text-sm tracking-widest hover:bg-g-primary-container hover:text-g-primary transition-all duration-300 active:scale-90 ripple shrink-0 border border-g-outline/10 shadow-sm"
+              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-aluminium/50 dark:bg-g-aluminium/10 text-g-primary flex items-center justify-center font-display font-black text-sm tracking-widest hover:bg-g-primary-container hover:text-g-primary transition-all duration-300 active:scale-90 ripple shrink-0 border border-g-outline/10 shadow-sm relative overflow-hidden"
             >
+              <md-ripple></md-ripple>
               JD
             </button>
           </div>
         </header>
 
-        {/* Tab-Controlled Content Panel */}
+        {/* Tab-Controlled Content Panel with responsive M3 Spring Animations */}
         <AnimatePresence mode="wait">
           {activeTab === 'destinations' && (
             <motion.div
               key="destinations"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.25 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ type: "spring", damping: 26, stiffness: 280 }}
             >
               {/* Material 3 Expressive Core Metric Display */}
               <section className="mt-4 mb-6 relative overflow-hidden material-card p-8 border-g-primary/10 shadow-elevation-2 rounded-[32px] rounded-bl-[8px]">
@@ -687,9 +481,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Geographic Lattice Network Canvas */}
-              <LatticeMapCanvas locations={filteredLocations} visited={visited} />
-
               {/* Expandable Destinations Timeline List */}
               <div className="space-y-6 relative">
                 <div className="absolute left-[1.125rem] top-0 bottom-0 w-[2px] bg-g-outline/15" />
@@ -708,13 +499,13 @@ export default function App() {
                       </div>
                       
                       <div className={cn(
-                        "material-card p-5 transition-all shadow-sm ripple group",
+                        "material-card p-5 transition-all shadow-sm ripple group relative overflow-hidden",
                         visited[loc.city] ? 'opacity-65 border-dashed bg-g-bg/50' : 'hover:border-g-primary/30',
                         idx % 2 === 0 ? "rounded-[32px] rounded-br-[8px]" : "rounded-[32px] rounded-bl-[8px]"
                       )}>
                         
                         {/* Upper row details */}
-                        <div className="flex justify-between items-start mb-2">
+                        <div className="flex justify-between items-start mb-2 relative z-10">
                           <div className="cursor-pointer flex-1 min-w-0" onClick={() => { triggerHaptic('light'); setExpandedCard(isExpanded ? null : loc.city); }}>
                             <h3 className="text-lg font-black tracking-tight leading-none mb-1.5 font-display text-g-text group-hover:text-g-primary transition-colors">{loc.city}</h3>
                             <p className="text-[11px] font-bold text-g-text-variant uppercase tracking-wider">{loc.kanji || 'PENDING KANJI'}</p>
@@ -724,9 +515,10 @@ export default function App() {
                             {/* Expand toggle */}
                             <button
                               onClick={() => { triggerHaptic('light'); setExpandedCard(isExpanded ? null : loc.city); }}
-                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-transform duration-200"
+                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-transform duration-200 relative overflow-hidden"
                               style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
                             >
+                              <md-ripple></md-ripple>
                               <ChevronDown size={18} />
                             </button>
                             
@@ -735,30 +527,32 @@ export default function App() {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={() => triggerHaptic('medium')}
-                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary hover:bg-g-primary-container transition-all cursor-pointer"
+                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary hover:bg-g-primary-container transition-all cursor-pointer relative overflow-hidden"
                               title="View in Google Maps"
                             >
+                              <md-ripple></md-ripple>
                               <ArrowUpRight size={18} />
                             </a>
                             
                             <button 
                               onClick={() => toggleVisited(loc.city)} 
-                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-colors cursor-pointer"
+                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-colors cursor-pointer relative overflow-hidden"
                             >
+                              <md-ripple></md-ripple>
                               {visited[loc.city] ? <CheckCircle2 size={20} className="text-g-primary" /> : <Circle size={20} className="text-g-outline group-hover:text-g-primary/50" />}
                             </button>
                           </div>
                         </div>
 
-                        {/* Interactive Expandable Sub-Console */}
+                        {/* Interactive Expandable Sub-Console with Material Spring */}
                         <AnimatePresence initial={false}>
                           {isExpanded && (
                             <motion.div
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                              className="overflow-hidden mt-3 pt-3 border-t border-g-outline/10 space-y-4"
+                              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+                              className="overflow-hidden mt-3 pt-3 border-t border-g-outline/10 space-y-4 relative z-10"
                             >
                               {/* JST Travel Time Slots Setting */}
                               <div className="grid grid-cols-3 gap-2.5">
@@ -823,15 +617,16 @@ export default function App() {
                                   
                                   <button
                                     onClick={() => applyEkiStamp(loc.city)}
-                                    className="ml-auto py-2 px-4 bg-g-primary-container text-g-primary rounded-xl text-[10px] font-black uppercase tracking-wider hover:brightness-105 active:scale-95 transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                                    className="ml-auto py-2 px-4 bg-g-primary-container text-g-primary rounded-xl text-[10px] font-black uppercase tracking-wider hover:brightness-105 active:scale-95 transition-all shadow-sm flex items-center gap-1.5 cursor-pointer relative overflow-hidden"
                                   >
+                                    <md-ripple></md-ripple>
                                     <BookOpen size={12} />
                                     <span>Press Seal</span>
                                   </button>
                                 </div>
 
                                 {loc.stamp && (
-                                  <div className="flex justify-center mt-4">
+                                  <div className="flex justify-center mt-4 animate-[slideUp_0.35s_cubic-bezier(0.34,1.56,0.64,1)]">
                                     <div 
                                       style={{ borderColor: `${loc.stamp.color}aa`, color: loc.stamp.color }}
                                       className="w-20 h-20 rounded-full border-4 border-double flex flex-col items-center justify-center font-display font-black text-[9px] tracking-tight relative rotate-[-5deg] bg-white/20 dark:bg-black/10 select-none shadow-inner"
@@ -848,8 +643,9 @@ export default function App() {
                               <div className="pt-2 flex justify-end">
                                 <button 
                                   onClick={() => handleDelete(loc.city)} 
-                                  className="py-2 px-4 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer"
+                                  className="py-2 px-4 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer relative overflow-hidden"
                                 >
+                                  <md-ripple></md-ripple>
                                   <Trash2 size={12} />
                                   <span>Remove Node</span>
                                 </button>
@@ -859,7 +655,7 @@ export default function App() {
                         </AnimatePresence>
 
                         {/* Standard lower row details when closed */}
-                        <div className="flex items-center gap-4 mt-4 pt-1">
+                        <div className="flex items-center gap-4 mt-4 pt-1 relative z-10">
                           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-g-aluminium/55 dark:bg-g-aluminium/10 rounded-lg text-[10px] font-bold uppercase text-g-text-variant">
                             <Landmark size={11} /> {loc.category}
                           </div>
@@ -917,10 +713,10 @@ export default function App() {
           {activeTab === 'schedule' && (
             <motion.div
               key="schedule"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.25 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ type: "spring", damping: 26, stiffness: 280 }}
               className="space-y-6"
             >
               {/* Daily Schedule Summary Card */}
@@ -947,7 +743,7 @@ export default function App() {
                     const conflict = hasConflict(loc, idx);
                     
                     return (
-                      <div key={loc.city} className="space-y-2">
+                      <div key={loc.city} className="space-y-2 animate-[slideUp_0.4s_cubic-bezier(0.2,0,0,1)]">
                         {dateHeader && (
                           <div className="flex items-center gap-2 mt-4 mb-2">
                             <span className="w-2 h-2 rounded-full bg-g-primary" />
@@ -957,12 +753,12 @@ export default function App() {
                         )}
 
                         <div className={cn(
-                          "material-card p-5 border border-g-outline/10 flex items-center gap-4 transition-all hover:border-g-primary/30 rounded-[24px]",
+                          "material-card p-5 border border-g-outline/10 flex items-center gap-4 transition-all hover:border-g-primary/30 rounded-[24px] relative overflow-hidden",
                           conflict ? "border-amber-500/30 bg-amber-500/5" : "bg-g-surface"
                         )}>
                           
                           {/* Hour / Duration slot */}
-                          <div className="flex flex-col items-center justify-center pr-3 border-r border-g-outline/10 w-20 shrink-0 text-center">
+                          <div className="flex flex-col items-center justify-center pr-3 border-r border-g-outline/10 w-20 shrink-0 text-center relative z-10">
                             <span className="font-mono text-xs font-black text-g-primary">{loc.arrivalTime || "Flexible"}</span>
                             <span className="text-[9px] font-bold text-g-text-variant uppercase tracking-widest mt-1">Arrival</span>
                             
@@ -975,7 +771,7 @@ export default function App() {
                           </div>
 
                           {/* Destination Card Body */}
-                          <div className="flex-1 min-w-0">
+                          <div className="flex-1 min-w-0 relative z-10">
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-[9px] font-bold px-2 py-0.5 bg-g-primary-container text-g-primary rounded-full uppercase tracking-wider">{loc.category}</span>
                               {conflict && (
@@ -996,9 +792,10 @@ export default function App() {
                               setExpandedCard(loc.city);
                               setActiveTab('destinations');
                             }}
-                            className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-colors shrink-0"
+                            className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-colors shrink-0 relative overflow-hidden"
                             title="Edit schedule details"
                           >
+                            <md-ripple></md-ripple>
                             <ArrowRight size={18} />
                           </button>
                         </div>
@@ -1014,10 +811,10 @@ export default function App() {
           {activeTab === 'geofence' && (
             <motion.div
               key="geofence"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.25 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ type: "spring", damping: 26, stiffness: 280 }}
               className="space-y-6"
             >
               {/* Radar Sweep Animated HUD Panel */}
@@ -1054,19 +851,13 @@ export default function App() {
                     <p className="text-[10px] text-g-text-variant uppercase tracking-wider mt-0.5">Stage & test coordinates offline</p>
                   </div>
                   
-                  {/* Simulator slide toggle */}
-                  <button
+                  {/* Authentic Material Web Switch component */}
+                  <md-switch
+                    selected={isSimulating ? true : undefined}
+                    checked={isSimulating}
                     onClick={() => { triggerHaptic('medium'); setIsSimulating(!isSimulating); }}
-                    className={cn(
-                      "relative w-12 h-6 rounded-full transition-colors duration-200 cursor-pointer",
-                      isSimulating ? "bg-g-primary" : "bg-g-outline"
-                    )}
-                  >
-                    <div className={cn(
-                      "w-4.5 h-4.5 bg-white rounded-full absolute top-[3.5px] transition-all duration-200 shadow-sm",
-                      isSimulating ? "left-[26px]" : "left-[4px]"
-                    )} />
-                  </button>
+                    className="cursor-pointer"
+                  ></md-switch>
                 </div>
 
                 <div className="space-y-4">
@@ -1110,7 +901,7 @@ export default function App() {
                       step="25"
                       value={geofenceRadius}
                       onChange={(e) => setGeofenceRadius(parseInt(e.target.value))}
-                      className="w-full accent-g-primary h-1 bg-g-aluminium dark:bg-g-aluminium/10 rounded-lg cursor-pointer"
+                      className="w-full accent-g-primary h-1 bg-g-aluminium dark:bg-g-aluminium/10 rounded-lg cursor-pointer animate-[slideUp_0.5s_ease]"
                     />
                   </div>
                 </div>
@@ -1120,7 +911,7 @@ export default function App() {
               <div className="space-y-3">
                 <span className="font-display text-sm font-black text-g-text uppercase tracking-widest block px-1">Proximity radar feed</span>
                 {sortedDistanceLocations.length === 0 ? (
-                  <div className="p-5 text-center bg-g-surface border border-g-outline/10 rounded-2xl">
+                  <div className="p-5 text-center bg-g-surface border border-g-outline/10 rounded-2xl animate-[slideUp_0.4s_ease]">
                     <CheckCircle2 className="w-8 h-8 text-g-primary mx-auto mb-2" />
                     <span className="text-xs text-g-text-variant font-bold block">All destinations visited! ✈️</span>
                   </div>
@@ -1133,7 +924,7 @@ export default function App() {
                         : `${km.toFixed(2)} km`;
                         
                       return (
-                        <div key={loc.city} className="material-card p-4.5 border border-g-outline/10 bg-g-surface rounded-2xl flex items-center justify-between">
+                        <div key={loc.city} className="material-card p-4.5 border border-g-outline/10 bg-g-surface rounded-2xl flex items-center justify-between animate-[slideUp_0.35s_cubic-bezier(0.2,0,0,1)]">
                           <div className="min-w-0 pr-3">
                             <span className="font-mono text-[9px] font-bold text-g-primary block mb-0.5">NEAREST NODE 0{idx+1}</span>
                             <h5 className="text-sm font-black font-display text-g-text truncate leading-none">{loc.city}</h5>
@@ -1156,15 +947,16 @@ export default function App() {
         {/* Global Bottom Navigation Safety Spacer */}
         <div className="h-28 w-full shrink-0"></div>
 
-        {/* Material 3 Bottom Navigation Bar */}
-        <nav className="fixed bottom-0 left-0 right-0 h-20 bg-g-surface/85 backdrop-blur-md border-t border-g-outline/10 flex items-center justify-around px-6 z-40 pb-safe shadow-elevation-3">
+        {/* Material 3 Bottom Navigation Bar with Authentic Ripple and Springs */}
+        <nav className="fixed bottom-0 left-0 right-0 h-20 bg-g-surface/85 backdrop-blur-md border-t border-g-outline/10 flex items-center justify-around px-6 z-40 pb-safe shadow-elevation-3 select-none">
           <button 
             onClick={() => { triggerHaptic('light'); setActiveTab('destinations'); }}
             className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer select-none",
+              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer relative overflow-hidden select-none",
               activeTab === 'destinations' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
             )}
           >
+            <md-ripple></md-ripple>
             <div className={cn(
               "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
               activeTab === 'destinations' ? "bg-g-primary-container text-g-primary scale-105" : "bg-transparent"
@@ -1177,10 +969,11 @@ export default function App() {
           <button 
             onClick={() => { triggerHaptic('light'); setActiveTab('schedule'); }}
             className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer select-none",
+              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer relative overflow-hidden select-none",
               activeTab === 'schedule' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
             )}
           >
+            <md-ripple></md-ripple>
             <div className={cn(
               "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
               activeTab === 'schedule' ? "bg-g-primary-container text-g-primary scale-105" : "bg-transparent"
@@ -1193,10 +986,11 @@ export default function App() {
           <button 
             onClick={() => { triggerHaptic('light'); setActiveTab('geofence'); }}
             className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer select-none",
+              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer relative overflow-hidden select-none",
               activeTab === 'geofence' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
             )}
           >
+            <md-ripple></md-ripple>
             <div className={cn(
               "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
               activeTab === 'geofence' ? "bg-g-primary-container text-g-primary scale-105" : "bg-transparent"
@@ -1207,12 +1001,12 @@ export default function App() {
           </button>
         </nav>
 
-        {/* geofence automatic Check-in Success Banner notification */}
+        {/* geofence automatic Check-in Success Banner notification with Material Spring */}
         <AnimatePresence>
           {showCheckInOverlay && (
             <div className="fixed top-8 left-4 right-4 z-[100] flex justify-center pointer-events-none">
               <motion.div
-                initial={{ opacity: 0, y: -40, scale: 0.95 }}
+                initial={{ opacity: 0, y: -45, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -30, scale: 0.95 }}
                 transition={{ type: "spring", damping: 20, stiffness: 220 }}
@@ -1232,7 +1026,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Add Location Bottom Sheet */}
+        {/* Add Location Bottom Sheet with Material Spring */}
         <AnimatePresence>
           {isAdding && (
             <div className="fixed inset-0 z-50 flex items-end justify-center">
@@ -1250,7 +1044,7 @@ export default function App() {
                 initial={{ opacity: 0, y: '100%' }} 
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: '100%' }} 
-                transition={{ type: "spring", damping: 25, stiffness: 220 }} 
+                transition={{ type: "spring", damping: 26, stiffness: 280 }} 
                 className="relative w-full max-w-lg bg-white/80 dark:bg-g-surface/80 backdrop-blur-xl border border-g-outline/15 rounded-t-[40px] rounded-b-[24px] p-6 md:p-8 shadow-2xl flex flex-col space-y-6 z-10 max-h-[85vh] overflow-y-auto no-scrollbar transition-colors duration-700"
               >
                 {/* Header status bar */}
@@ -1261,8 +1055,9 @@ export default function App() {
                   </div>
                   <button 
                     onClick={() => { triggerHaptic('light'); setIsAdding(false); }} 
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-g-aluminium dark:bg-g-aluminium/10 text-g-text hover:bg-g-primary-container hover:text-g-primary transition-colors cursor-pointer"
+                    className="w-10 h-10 flex items-center justify-center rounded-full bg-g-aluminium dark:bg-g-aluminium/10 text-g-text hover:bg-g-primary-container hover:text-g-primary transition-colors cursor-pointer relative overflow-hidden"
                   >
+                    <md-ripple></md-ripple>
                     <X size={20} />
                   </button>
                 </div>
@@ -1358,8 +1153,9 @@ export default function App() {
                 <div className="pt-4">
                   <button 
                     onClick={handleAddLocation} 
-                    className="w-full h-16 bg-g-primary text-white dark:text-[#202124] font-display font-black text-sm tracking-widest uppercase rounded-2xl shadow-elevation-2 hover:brightness-110 active:scale-95 transition-all duration-200 ripple flex items-center justify-center cursor-pointer"
+                    className="w-full h-16 bg-g-primary text-white dark:text-[#202124] font-display font-black text-sm tracking-widest uppercase rounded-2xl shadow-elevation-2 hover:brightness-110 active:scale-95 transition-all duration-200 ripple flex items-center justify-center cursor-pointer relative overflow-hidden"
                   >
+                    <md-ripple></md-ripple>
                     Commit Node
                   </button>
                 </div>
@@ -1368,7 +1164,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Profile Modal */}
+        {/* Profile Modal with Material Spring */}
         <AnimatePresence>
           {isProfileOpen && (
             <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:p-6">
@@ -1386,7 +1182,7 @@ export default function App() {
                 initial={{ opacity: 0, y: '100%' }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: '100%' }}
-                transition={{ type: "spring", damping: 25, stiffness: 220 }}
+                transition={{ type: "spring", damping: 26, stiffness: 280 }}
                 className="relative w-full max-w-lg bg-white/80 dark:bg-g-surface/80 backdrop-blur-xl border border-g-outline/15 rounded-t-[40px] rounded-b-[24px] p-6 md:p-8 shadow-2xl flex flex-col space-y-6 z-10 max-h-[85vh] overflow-y-auto no-scrollbar transition-colors duration-700"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -1398,8 +1194,9 @@ export default function App() {
                   </div>
                   <button
                     onClick={() => { triggerHaptic('light'); setIsProfileOpen(false); }}
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-g-aluminium dark:bg-g-aluminium/10 text-g-text hover:bg-g-primary-container hover:text-g-primary transition-colors cursor-pointer"
+                    className="w-10 h-10 flex items-center justify-center rounded-full bg-g-aluminium dark:bg-g-aluminium/10 text-g-text hover:bg-g-primary-container hover:text-g-primary transition-colors cursor-pointer relative overflow-hidden"
                   >
+                    <md-ripple></md-ripple>
                     <X size={20} />
                   </button>
                 </div>
@@ -1432,8 +1229,9 @@ export default function App() {
                 {/* Close Button */}
                 <button
                   onClick={() => { triggerHaptic('medium'); setIsProfileOpen(false); }}
-                  className="w-full py-4 bg-g-primary text-white dark:text-[#202124] font-bold rounded-2xl shadow-elevation-2 hover:bg-g-primary/95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 ripple mt-4 cursor-pointer"
+                  className="w-full py-4 bg-g-primary text-white dark:text-[#202124] font-bold rounded-2xl shadow-elevation-2 hover:bg-g-primary/95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 ripple mt-4 cursor-pointer relative overflow-hidden"
                 >
+                  <md-ripple></md-ripple>
                   <span>Close Profile</span>
                 </button>
               </motion.div>
