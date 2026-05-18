@@ -8,33 +8,34 @@ import {
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-// Literal open source Material Design web components
+// Official Open Source Material Design Web Elements
 import '@material/web/icon/icon.js';
 import '@material/web/ripple/ripple.js';
 import '@material/web/switch/switch.js';
+import '@material/web/elevation/elevation.js';
 
 function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
 const INITIAL_LOCATIONS = [
-  { city: "Montbell", kanji: "モンベル", category: "Retail", budget: 0, priority: 5, description: "Outdoor gear & apparel", lat: 35.6580, lng: 139.7016, arrivalDate: "2026-05-18", arrivalTime: "12:00", departureTime: "13:30", stamp: null, notes: "" },
-  { city: "mont-bell Yokohama Shin-Yamashita", kanji: "モンベル 横浜しん山下", category: "Retail", budget: 0, priority: 4, description: "Shin-Yamashita Store", lat: 35.4385, lng: 139.6644, arrivalDate: "2026-05-19", arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
-  { city: "Cerulean Tower Tokyu Hotel", kanji: "セルリアンタワー東急ホテル", category: "Hotel", budget: 0, priority: 5, description: "Main Base - Shibuya", lat: 35.6563, lng: 139.6995, arrivalDate: "2026-05-18", arrivalTime: "15:00", departureTime: "23:59", stamp: null, notes: "" },
-  { city: "Hase Station", kanji: "長谷駅", category: "Transit", budget: 0, priority: 3, description: "Kamakura access", lat: 35.3112, lng: 139.5358, arrivalDate: "2026-05-20", arrivalTime: "09:30", departureTime: "10:30", stamp: null, notes: "" },
-  { city: "OIMACHI TRACKS", kanji: "大井町トラックス", category: "Retail", budget: 0, priority: 3, description: "Shopping area", lat: 35.6064, lng: 139.7346, arrivalDate: "2026-05-18", arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
-  { city: "Nihombashi Mitsukoshi Main Store", kanji: "日本橋三越本店", category: "Retail", budget: 0, priority: 4, description: "Luxury department store", lat: 35.6856, lng: 139.7731, arrivalDate: "2026-05-21", arrivalTime: "11:00", departureTime: "13:00", stamp: null, notes: "" },
-  { city: "Laforet Harajuku", kanji: "ラフォーレ原宿", category: "Retail", budget: 0, priority: 4, description: "Harajuku fashion hub", lat: 35.6698, lng: 139.7049, arrivalDate: "2026-05-21", arrivalTime: "15:00", departureTime: "17:00", stamp: null, notes: "" },
-  { city: "Pensta Ecute Ueno", kanji: "ペンスタ エキュート上野", category: "Retail", budget: 0, priority: 2, description: "Suica Penguin goods", lat: 35.7144, lng: 139.7768, arrivalDate: "2026-05-22", arrivalTime: "10:00", departureTime: "11:00", stamp: null, notes: "" },
-  { city: "FREAK'S STORE Shinjuku", kanji: "フリークスストア", category: "Retail", budget: 0, priority: 4, description: "Lumineesutoshinjukuwimenzuten", lat: 35.6905, lng: 139.7020, arrivalDate: "2026-05-22", arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
-  { city: "AGILITY Nippori Leather", kanji: "AGILITY日暮里革工房", category: "Retail", budget: 0, priority: 4, description: "Leather goods workshop", lat: 35.7275, lng: 139.7701, arrivalDate: "2026-05-23", arrivalTime: "13:00", departureTime: "15:00", stamp: null, notes: "" },
-  { city: "Higashirinkan", kanji: "東林間", category: "Location", budget: 0, priority: 3, description: "3 Chome-18-3", lat: 35.5186, lng: 139.4357, arrivalDate: "2026-05-19", arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
-  { city: "Mu (Nothingness)", kanji: "無", category: "Location", budget: 0, priority: 5, description: "Philosophy node", lat: 35.6580, lng: 139.7016, arrivalDate: "", arrivalTime: "", departureTime: "", stamp: null, notes: "" },
-  { city: "Narita International Airport", kanji: "成田国際空港", category: "Transit", budget: 0, priority: 5, description: "Entry/Exit Node", lat: 35.7720, lng: 140.3929, arrivalDate: "2026-05-18", arrivalTime: "08:00", departureTime: "09:30", stamp: null, notes: "" },
-  { city: "Red Roof Inn Kamata", kanji: "レッドルーフイン蒲田", category: "Hotel", budget: 0, priority: 5, description: "Kamata base", lat: 35.5604, lng: 139.7153, arrivalDate: "2026-05-19", arrivalTime: "21:00", departureTime: "09:00", stamp: null, notes: "" },
-  { city: "Shizuoka", kanji: "静岡県", category: "Urban x Nature", budget: 40000, priority: 5, description: "Urban x Nature", lat: 34.9756, lng: 138.3828, arrivalDate: "2026-05-24", arrivalTime: "10:00", departureTime: "18:00", stamp: null, notes: "" },
-  { city: "Nagoya", kanji: "名古屋", category: "Urban", budget: 30000, priority: 4, description: "Urban", lat: 35.1815, lng: 136.9066, arrivalDate: "2026-05-25", arrivalTime: "11:00", departureTime: "19:00", stamp: null, notes: "" },
-  { city: "Tokyo Dome", kanji: "東京ドームシティ", category: "Entertainment", budget: 10000, priority: 2, description: "Entertainment", lat: 35.7056, lng: 139.7519, arrivalDate: "2026-05-23", arrivalTime: "18:00", departureTime: "21:30", stamp: null, notes: "" },
+  { city: "Montbell", kanji: "モンベル", category: "Retail", budget: 0, priority: 5, description: "Outdoor gear & apparel", arrivalDate: "2026-05-18", arrivalTime: "12:00", departureTime: "13:30", stamp: null, notes: "" },
+  { city: "mont-bell Yokohama Shin-Yamashita", kanji: "モンベル 横浜しん山下", category: "Retail", budget: 0, priority: 4, description: "Shin-Yamashita Store", arrivalDate: "2026-05-19", arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
+  { city: "Cerulean Tower Tokyu Hotel", kanji: "セルリアンタワー東急ホテル", category: "Hotel", budget: 0, priority: 5, description: "Main Base - Shibuya", arrivalDate: "2026-05-18", arrivalTime: "15:00", departureTime: "23:59", stamp: null, notes: "" },
+  { city: "Hase Station", kanji: "長谷駅", category: "Transit", budget: 0, priority: 3, description: "Kamakura access", arrivalDate: "2026-05-20", arrivalTime: "09:30", departureTime: "10:30", stamp: null, notes: "" },
+  { city: "OIMACHI TRACKS", kanji: "大井町トラックス", category: "Retail", budget: 0, priority: 3, description: "Shopping area", arrivalDate: "2026-05-18", arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
+  { city: "Nihombashi Mitsukoshi Main Store", kanji: "日本橋三越本店", category: "Retail", budget: 0, priority: 4, description: "Luxury department store", arrivalDate: "2026-05-21", arrivalTime: "11:00", departureTime: "13:00", stamp: null, notes: "" },
+  { city: "Laforet Harajuku", kanji: "ラフォーレ原宿", category: "Retail", budget: 0, priority: 4, description: "Harajuku fashion hub", arrivalDate: "2026-05-21", arrivalTime: "15:00", departureTime: "17:00", stamp: null, notes: "" },
+  { city: "Pensta Ecute Ueno", kanji: "ペンスタ エキュート上野", category: "Retail", budget: 0, priority: 2, description: "Suica Penguin goods", arrivalDate: "2026-05-22", arrivalTime: "10:00", departureTime: "11:00", stamp: null, notes: "" },
+  { city: "FREAK'S STORE Shinjuku", kanji: "フリークスストア", category: "Retail", budget: 0, priority: 4, description: "Lumineesutoshinjukuwimenzuten", arrivalDate: "2026-05-22", arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
+  { city: "AGILITY Nippori Leather", kanji: "AGILITY日暮里革工房", category: "Retail", budget: 0, priority: 4, description: "Leather goods workshop", arrivalDate: "2026-05-23", arrivalTime: "13:00", departureTime: "15:00", stamp: null, notes: "" },
+  { city: "Higashirinkan", kanji: "東林間", category: "Location", budget: 0, priority: 3, description: "3 Chome-18-3", arrivalDate: "2026-05-19", arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
+  { city: "Mu (Nothingness)", kanji: "無", category: "Location", budget: 0, priority: 5, description: "Philosophy node", arrivalDate: "", arrivalTime: "", departureTime: "", stamp: null, notes: "" },
+  { city: "Narita International Airport", kanji: "成田国際空港", category: "Transit", budget: 0, priority: 5, description: "Entry/Exit Node", arrivalDate: "2026-05-18", arrivalTime: "08:00", departureTime: "09:30", stamp: null, notes: "" },
+  { city: "Red Roof Inn Kamata", kanji: "レッドルーフイン蒲田", category: "Hotel", budget: 0, priority: 5, description: "Kamata base", arrivalDate: "2026-05-19", arrivalTime: "21:00", departureTime: "09:00", stamp: null, notes: "" },
+  { city: "Shizuoka", kanji: "静岡県", category: "Urban x Nature", budget: 40000, priority: 5, description: "Urban x Nature", arrivalDate: "2026-05-24", arrivalTime: "10:00", departureTime: "18:00", stamp: null, notes: "" },
+  { city: "Nagoya", kanji: "名古屋", category: "Urban", budget: 30000, priority: 4, description: "Urban", arrivalDate: "2026-05-25", arrivalTime: "11:00", departureTime: "19:00", stamp: null, notes: "" },
+  { city: "Tokyo Dome", kanji: "東京ドームシティ", category: "Entertainment", budget: 10000, priority: 2, description: "Entertainment", arrivalDate: "2026-05-23", arrivalTime: "18:00", departureTime: "21:30", stamp: null, notes: "" },
 ];
 
 const PRIORITY_COLORS = {
@@ -53,32 +54,14 @@ const triggerHaptic = (type = 'light') => {
   } catch (e) {}
 };
 
-// Precise Haversine distance calculator
-function getHaversineDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371e3; // Earth's radius in meters
-  const phi1 = lat1 * Math.PI / 180;
-  const phi2 = lat2 * Math.PI / 180;
-  const deltaPhi = (lat2 - lat1) * Math.PI / 180;
-  const deltaLambda = (lon2 - lon1) * Math.PI / 180;
-
-  const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
-            Math.cos(phi1) * Math.cos(phi2) *
-            Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return R * c; // in meters
-}
-
 export default function App() {
   const [locations, setLocations] = useState(() => {
     const saved = localStorage.getItem('onyx_itinerary_locations');
     const current = saved ? JSON.parse(saved) : INITIAL_LOCATIONS;
-    // Backwards compatibility layer to inject lat, lng, and scheduling properties if absent
+    // Enriched properties logic for backwards-compatibility
     const enrichedCurrent = current.map(item => {
       const initMatch = INITIAL_LOCATIONS.find(l => l.city === item.city) || {};
       return {
-        lat: initMatch.lat || 35.6563 + (Math.random() - 0.5) * 0.05,
-        lng: initMatch.lng || 139.6995 + (Math.random() - 0.5) * 0.05,
         arrivalDate: "",
         arrivalTime: "",
         departureTime: "",
@@ -106,21 +89,14 @@ export default function App() {
   const [isAdding, setIsAdding] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
-  // Navigation states
-  const [activeTab, setActiveTab] = useState('destinations'); // 'destinations' | 'schedule' | 'geofence'
-  const [expandedCard, setExpandedCard] = useState(null); // String name of expanded location
-  const [selectedStampColor, setSelectedStampColor] = useState('#D32F2F'); // Vermilion red default
-  
-  // Geofencing GPS States
-  const [isSimulating, setIsSimulating] = useState(true);
-  const [simulatedCoords, setSimulatedCoords] = useState({ lat: 35.7720, lng: 140.3929 }); // Start at Narita Airport
-  const [realCoords, setRealCoords] = useState(null);
-  const [geofenceRadius, setGeofenceRadius] = useState(150); // meters
-  const [showCheckInOverlay, setShowCheckInOverlay] = useState(null);
+  // Two clean tabs: Destinations and Calendar
+  const [activeTab, setActiveTab] = useState('destinations'); // 'destinations' | 'schedule'
+  const [expandedCard, setExpandedCard] = useState(null);
+  const [selectedStampColor, setSelectedStampColor] = useState('#D32F2F'); // Classic Vermilion Red
 
   const [newLoc, setNewLoc] = useState({ 
     city: '', kanji: '', category: 'Urban', budget: 0, priority: 5,
-    lat: '', lng: '', arrivalDate: '', arrivalTime: '', departureTime: '' 
+    arrivalDate: '', arrivalTime: '', departureTime: '' 
   });
   
   const [isStealthMode, setIsStealthMode] = useState(() => localStorage.getItem('onyx_stealth_mode') === 'true');
@@ -227,50 +203,6 @@ export default function App() {
     localStorage.setItem('onyx_itinerary_visited', JSON.stringify(visited));
   }, [visited]);
 
-  // GPS Watcher
-  useEffect(() => {
-    if (isSimulating) return;
-
-    let watchId;
-    if (typeof navigator !== 'undefined' && navigator.geolocation) {
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          setRealCoords({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          console.error("GPS telemetry error:", error);
-        },
-        { enableHighAccuracy: true }
-      );
-    }
-    return () => {
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-    };
-  }, [isSimulating]);
-
-  const activeLat = isSimulating ? simulatedCoords.lat : (realCoords?.lat || 35.6895);
-  const activeLng = isSimulating ? simulatedCoords.lng : (realCoords?.lng || 139.6917);
-
-  // Real-Time Geofence checking loop
-  useEffect(() => {
-    locations.forEach(loc => {
-      if (visited[loc.city]) return;
-
-      const dist = getHaversineDistance(activeLat, activeLng, loc.lat, loc.lng);
-      if (dist <= geofenceRadius) {
-        triggerHaptic('heavy');
-        setVisited(prev => ({ ...prev, [loc.city]: true }));
-        setShowCheckInOverlay(loc);
-        setTimeout(() => {
-          setShowCheckInOverlay(null);
-        }, 4000);
-      }
-    });
-  }, [activeLat, activeLng, locations, visited, geofenceRadius]);
-
   const tokyoTime = useMemo(() => {
     return new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Tokyo',
@@ -300,13 +232,9 @@ export default function App() {
   const handleAddLocation = () => {
     if (!newLoc.city) return;
     triggerHaptic('medium');
-    const latVal = parseFloat(newLoc.lat) || (35.6895 + (Math.random() - 0.5) * 0.05);
-    const lngVal = parseFloat(newLoc.lng) || (139.6917 + (Math.random() - 0.5) * 0.05);
     
     setLocations([...locations, { 
       ...newLoc, 
-      lat: latVal,
-      lng: lngVal,
       arrivalDate: newLoc.arrivalDate || "",
       arrivalTime: newLoc.arrivalTime || "",
       departureTime: newLoc.departureTime || "",
@@ -316,7 +244,7 @@ export default function App() {
     }]);
     setNewLoc({ 
       city: '', kanji: '', category: 'Urban', budget: 0, priority: 5,
-      lat: '', lng: '', arrivalDate: '', arrivalTime: '', departureTime: '' 
+      arrivalDate: '', arrivalTime: '', departureTime: '' 
     });
     setIsAdding(false);
   };
@@ -326,7 +254,6 @@ export default function App() {
     setLocations(locations.filter(l => l.city !== city));
   };
 
-  // Updaters for expanded card inputs
   const updateLocationField = (city, field, value) => {
     setLocations(prev => prev.map(loc => {
       if (loc.city === city) {
@@ -336,7 +263,6 @@ export default function App() {
     }));
   };
 
-  // Eki stamp creator
   const applyEkiStamp = (city) => {
     triggerHaptic('heavy');
     const today = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -347,7 +273,7 @@ export default function App() {
     });
   };
 
-  // Chronological Scheduled timesheet parser
+  // Chronological timesheet sorter
   const scheduledLocations = useMemo(() => {
     return locations
       .filter(l => l.arrivalDate)
@@ -358,7 +284,6 @@ export default function App() {
       });
   }, [locations]);
 
-  // Formatter for calendar JST labels
   const formatDateLabel = (dateStr) => {
     try {
       const d = new Date(dateStr);
@@ -368,13 +293,11 @@ export default function App() {
     }
   };
 
-  // Overlap checker between scheduled blocks
   const hasConflict = (currentLoc, index) => {
     if (index === 0) return false;
     const prevLoc = scheduledLocations[index - 1];
     if (prevLoc.arrivalDate !== currentLoc.arrivalDate) return false;
     
-    // Convert times to numeric minutes to check overlapping boundaries
     const getMinutes = (tStr) => {
       if (!tStr) return 0;
       const [h, m] = tStr.split(':').map(Number);
@@ -385,17 +308,6 @@ export default function App() {
     const currStart = getMinutes(currentLoc.arrivalTime);
     return currStart < prevEnd;
   };
-
-  // Geofence distances sorter
-  const sortedDistanceLocations = useMemo(() => {
-    return locations
-      .filter(l => !visited[l.city])
-      .map(loc => {
-        const dist = getHaversineDistance(activeLat, activeLng, loc.lat, loc.lng);
-        return { ...loc, distance: dist };
-      })
-      .sort((a, b) => a.distance - b.distance);
-  }, [locations, visited, activeLat, activeLng]);
 
   return (
     <div className="min-h-screen bg-g-bg text-g-text font-sans selection:bg-g-primary-container pb-32 overscroll-none transition-colors duration-700">
@@ -422,14 +334,14 @@ export default function App() {
           <div className="flex gap-2">
             <button 
               onClick={() => { triggerHaptic(); setIsAdding(true); }} 
-              className="w-14 h-14 rounded-[20px] rounded-bl-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple relative overflow-hidden"
+              className="w-14 h-14 rounded-[20px] rounded-bl-[8px] bg-g-primary text-white dark:text-[#202124] flex items-center justify-center hover:brightness-110 transition-all duration-300 shadow-elevation-2 active:scale-95 ripple relative overflow-hidden cursor-pointer"
             >
               <md-ripple></md-ripple>
               <Plus className="w-6 h-6 stroke-[3]" />
             </button>
             <button
               onClick={() => { triggerHaptic('medium'); setIsProfileOpen(true); }}
-              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-aluminium/50 dark:bg-g-aluminium/10 text-g-primary flex items-center justify-center font-display font-black text-sm tracking-widest hover:bg-g-primary-container hover:text-g-primary transition-all duration-300 active:scale-90 ripple shrink-0 border border-g-outline/10 shadow-sm relative overflow-hidden"
+              className="w-14 h-14 rounded-[20px] rounded-br-[8px] bg-g-aluminium/50 dark:bg-g-aluminium/10 text-g-primary flex items-center justify-center font-display font-black text-sm tracking-widest hover:bg-g-primary-container hover:text-g-primary transition-all duration-300 active:scale-90 ripple shrink-0 border border-g-outline/10 shadow-sm relative overflow-hidden cursor-pointer"
             >
               <md-ripple></md-ripple>
               JD
@@ -448,7 +360,8 @@ export default function App() {
               transition={{ type: "spring", damping: 26, stiffness: 280 }}
             >
               {/* Material 3 Expressive Core Metric Display */}
-              <section className="mt-4 mb-6 relative overflow-hidden material-card p-8 border-g-primary/10 shadow-elevation-2 rounded-[32px] rounded-bl-[8px]">
+              <section className="mt-4 mb-6 relative overflow-hidden material-card p-8 border-g-primary/10 rounded-[32px] rounded-bl-[8px]">
+                <md-elevation></md-elevation>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-g-primary/5 blur-3xl -mr-16 -mt-16 rounded-full" />
                 <span className="text-[10px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-4">Command Summary</span>
                 <div className="text-5xl font-bold tabular-nums tracking-tighter mb-2 text-g-text font-display">
@@ -503,6 +416,7 @@ export default function App() {
                         visited[loc.city] ? 'opacity-65 border-dashed bg-g-bg/50' : 'hover:border-g-primary/30',
                         idx % 2 === 0 ? "rounded-[32px] rounded-br-[8px]" : "rounded-[32px] rounded-bl-[8px]"
                       )}>
+                        <md-elevation></md-elevation>
                         
                         {/* Upper row details */}
                         <div className="flex justify-between items-start mb-2 relative z-10">
@@ -515,7 +429,7 @@ export default function App() {
                             {/* Expand toggle */}
                             <button
                               onClick={() => { triggerHaptic('light'); setExpandedCard(isExpanded ? null : loc.city); }}
-                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-transform duration-200 relative overflow-hidden"
+                              className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-transform duration-200 relative overflow-hidden cursor-pointer"
                               style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
                             >
                               <md-ripple></md-ripple>
@@ -544,7 +458,7 @@ export default function App() {
                           </div>
                         </div>
 
-                        {/* Interactive Expandable Sub-Console with Material Spring */}
+                        {/* Interactive Expandable Sub-Console */}
                         <AnimatePresence initial={false}>
                           {isExpanded && (
                             <motion.div
@@ -696,7 +610,7 @@ export default function App() {
                             <span className="w-1 h-1 rounded-full bg-g-primary/40" />
                             <span className="w-1 h-1 rounded-full bg-g-primary/40" />
                           </div>
-                          <div className="flex items-center gap-2 px-3.5 py-1.5 bg-g-aluminium/20 dark:bg-g-aluminium/5 rounded-xl border border-g-outline/10 text-[9px] font-bold uppercase tracking-wider text-g-text-variant select-none">
+                          <div className="flex items-center gap-2 px-3.5 py-1.5 bg-g-aluminium/20 dark:bg-g-aluminium/5 rounded-xl border border-g-outline/10 text-[9px] font-bold uppercase tracking-wider text-g-text-variant select-none animate-[slideUp_0.4s_ease]">
                             <Clock size={10} className="text-g-primary shrink-0 animate-pulse" />
                             <span>JR Estimate: ~{((loc.city.length * 3) % 25) + 12}m • ¥{((loc.city.length * 40) % 280) + 160}</span>
                           </div>
@@ -720,7 +634,8 @@ export default function App() {
               className="space-y-6"
             >
               {/* Daily Schedule Summary Card */}
-              <section className="material-card p-6 border-g-outline/10 bg-g-surface shadow-elevation-1 rounded-[32px]">
+              <section className="material-card p-6 border-g-outline/10 bg-g-surface rounded-[32px] relative overflow-hidden">
+                <md-elevation></md-elevation>
                 <span className="text-[10px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-3">Timeline Diagnostics</span>
                 <h3 className="font-display text-2xl font-black text-g-text leading-none tracking-tight">Travel Timesheet</h3>
                 <p className="text-xs text-g-text-variant mt-2 leading-relaxed">
@@ -729,7 +644,8 @@ export default function App() {
               </section>
 
               {scheduledLocations.length === 0 ? (
-                <div className="p-8 text-center bg-g-surface border border-g-outline/10 rounded-[28px] space-y-3">
+                <div className="p-8 text-center bg-g-surface border border-g-outline/10 rounded-[28px] space-y-3 relative overflow-hidden">
+                  <md-elevation></md-elevation>
                   <Clock className="w-10 h-10 text-g-text-variant/40 mx-auto" />
                   <h4 className="font-display font-bold text-g-text text-base">Unscheduled Itinerary</h4>
                   <p className="text-xs text-g-text-variant leading-relaxed">
@@ -756,6 +672,7 @@ export default function App() {
                           "material-card p-5 border border-g-outline/10 flex items-center gap-4 transition-all hover:border-g-primary/30 rounded-[24px] relative overflow-hidden",
                           conflict ? "border-amber-500/30 bg-amber-500/5" : "bg-g-surface"
                         )}>
+                          <md-elevation></md-elevation>
                           
                           {/* Hour / Duration slot */}
                           <div className="flex flex-col items-center justify-center pr-3 border-r border-g-outline/10 w-20 shrink-0 text-center relative z-10">
@@ -792,7 +709,7 @@ export default function App() {
                               setExpandedCard(loc.city);
                               setActiveTab('destinations');
                             }}
-                            className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-colors shrink-0 relative overflow-hidden"
+                            className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-colors shrink-0 relative overflow-hidden cursor-pointer"
                             title="Edit schedule details"
                           >
                             <md-ripple></md-ripple>
@@ -806,160 +723,23 @@ export default function App() {
               )}
             </motion.div>
           )}
-
-          {/* Tab 3: GPS Geofence Radar HUD & Simulator Console */}
-          {activeTab === 'geofence' && (
-            <motion.div
-              key="geofence"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ type: "spring", damping: 26, stiffness: 280 }}
-              className="space-y-6"
-            >
-              {/* Radar Sweep Animated HUD Panel */}
-              <section className="material-card p-6 border-g-outline/10 bg-g-surface shadow-elevation-1 rounded-[32px] text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-g-primary/5 blur-3xl rounded-full" />
-                <span className="text-[10px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-3">Satellite Telemetry Radar</span>
-                
-                {/* Visual Radial sweep circle */}
-                <div className="relative w-44 h-44 mx-auto my-4 bg-g-primary-container/20 rounded-full border border-g-primary/15 flex items-center justify-center overflow-hidden">
-                  <div className="absolute w-36 h-36 rounded-full border border-g-primary/10 animate-ping opacity-25" />
-                  <div className="absolute w-24 h-24 rounded-full border border-g-primary/20" />
-                  <div className="absolute w-10 h-10 rounded-full border border-g-primary/30" />
-                  <div className="absolute w-0.5 h-full bg-g-primary/10 animate-[spin_6s_linear_infinite]" />
-                  <Activity size={24} className="text-g-primary animate-pulse" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-g-outline/10">
-                  <div className="text-left">
-                    <span className="text-[9px] font-bold text-g-text-variant uppercase tracking-wider block">Active Lat</span>
-                    <span className="font-mono text-sm font-black text-g-text">{activeLat.toFixed(6)}</span>
-                  </div>
-                  <div className="text-left">
-                    <span className="text-[9px] font-bold text-g-text-variant uppercase tracking-wider block">Active Lng</span>
-                    <span className="font-mono text-sm font-black text-g-text">{activeLng.toFixed(6)}</span>
-                  </div>
-                </div>
-              </section>
-
-              {/* Geofence Simulator / Warp console */}
-              <div className="material-card p-6 border border-g-outline/10 bg-g-surface shadow-sm rounded-[28px] space-y-5">
-                <div className="flex justify-between items-center border-b border-g-outline/10 pb-3">
-                  <div>
-                    <h4 className="font-display font-black text-g-text text-base">GPS Test Console</h4>
-                    <p className="text-[10px] text-g-text-variant uppercase tracking-wider mt-0.5">Stage & test coordinates offline</p>
-                  </div>
-                  
-                  {/* Authentic Material Web Switch component */}
-                  <md-switch
-                    selected={isSimulating ? true : undefined}
-                    checked={isSimulating}
-                    onClick={() => { triggerHaptic('medium'); setIsSimulating(!isSimulating); }}
-                    className="cursor-pointer"
-                  ></md-switch>
-                </div>
-
-                <div className="space-y-4">
-                  {/* Warp Dropdown Selector */}
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-wider block">Simulated Location Warp</label>
-                    <div className="relative">
-                      <select
-                        disabled={!isSimulating}
-                        value={locations.findIndex(l => l.lat === simulatedCoords.lat && l.lng === simulatedCoords.lng)}
-                        onChange={(e) => {
-                          const idx = parseInt(e.target.value);
-                          if (idx >= 0 && locations[idx]) {
-                            triggerHaptic('heavy');
-                            setSimulatedCoords({ lat: locations[idx].lat, lng: locations[idx].lng });
-                          }
-                        }}
-                        className="w-full py-3.5 px-4 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold text-xs focus:outline-none appearance-none disabled:opacity-40"
-                      >
-                        <option value="-1">-- Teleport to Tokyo Landmarks --</option>
-                        {locations.map((loc, i) => (
-                          <option key={loc.city} value={i}>{loc.city} ({loc.kanji})</option>
-                        ))}
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-g-text-variant">
-                        <ChevronDown size={16} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Geofence Detection Radius slider */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-g-text-variant uppercase tracking-wider">
-                      <span>Geofence Radius Threshold</span>
-                      <span className="text-g-primary font-mono font-bold">{geofenceRadius}m</span>
-                    </div>
-                    <input 
-                      type="range"
-                      min="50"
-                      max="500"
-                      step="25"
-                      value={geofenceRadius}
-                      onChange={(e) => setGeofenceRadius(parseInt(e.target.value))}
-                      className="w-full accent-g-primary h-1 bg-g-aluminium dark:bg-g-aluminium/10 rounded-lg cursor-pointer animate-[slideUp_0.5s_ease]"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Nearest Locations Proximity Feed */}
-              <div className="space-y-3">
-                <span className="font-display text-sm font-black text-g-text uppercase tracking-widest block px-1">Proximity radar feed</span>
-                {sortedDistanceLocations.length === 0 ? (
-                  <div className="p-5 text-center bg-g-surface border border-g-outline/10 rounded-2xl animate-[slideUp_0.4s_ease]">
-                    <CheckCircle2 className="w-8 h-8 text-g-primary mx-auto mb-2" />
-                    <span className="text-xs text-g-text-variant font-bold block">All destinations visited! ✈️</span>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {sortedDistanceLocations.slice(0, 3).map((loc, idx) => {
-                      const km = loc.distance / 1000;
-                      const displayDist = km < 1 
-                        ? `${loc.distance.toFixed(0)} meters` 
-                        : `${km.toFixed(2)} km`;
-                        
-                      return (
-                        <div key={loc.city} className="material-card p-4.5 border border-g-outline/10 bg-g-surface rounded-2xl flex items-center justify-between animate-[slideUp_0.35s_cubic-bezier(0.2,0,0,1)]">
-                          <div className="min-w-0 pr-3">
-                            <span className="font-mono text-[9px] font-bold text-g-primary block mb-0.5">NEAREST NODE 0{idx+1}</span>
-                            <h5 className="text-sm font-black font-display text-g-text truncate leading-none">{loc.city}</h5>
-                            <span className="text-[10px] font-medium text-g-text-variant uppercase tracking-wider block mt-1.5">{loc.kanji}</span>
-                          </div>
-                          
-                          <div className="shrink-0 text-right font-mono text-[11px] font-black text-g-primary bg-g-primary-container px-3 py-1.5 rounded-xl shadow-inner">
-                            {displayDist}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
         </AnimatePresence>
 
         {/* Global Bottom Navigation Safety Spacer */}
         <div className="h-28 w-full shrink-0"></div>
 
-        {/* Material 3 Bottom Navigation Bar with Authentic Ripple and Springs */}
-        <nav className="fixed bottom-0 left-0 right-0 h-20 bg-g-surface/85 backdrop-blur-md border-t border-g-outline/10 flex items-center justify-around px-6 z-40 pb-safe shadow-elevation-3 select-none">
+        {/* Material 3 Bottom Navigation Bar (No Ripples) */}
+        <nav className="fixed bottom-0 left-0 right-0 h-20 bg-g-surface/85 backdrop-blur-md border-t border-g-outline/10 flex items-center justify-around px-12 z-40 pb-safe shadow-elevation-3 select-none">
           <button 
             onClick={() => { triggerHaptic('light'); setActiveTab('destinations'); }}
             className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer relative overflow-hidden select-none",
+              "flex flex-col items-center gap-1.5 py-1 px-4 rounded-2xl transition-all duration-200 cursor-pointer select-none",
               activeTab === 'destinations' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
             )}
           >
-            <md-ripple></md-ripple>
             <div className={cn(
               "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
-              activeTab === 'destinations' ? "bg-g-primary-container text-g-primary scale-105" : "bg-transparent"
+              activeTab === 'destinations' ? "bg-g-primary-container text-g-primary scale-105 font-bold" : "bg-transparent"
             )}>
               <MapPin size={20} className={activeTab === 'destinations' ? "stroke-[2.5]" : "stroke-[1.5]"} />
             </div>
@@ -969,64 +749,21 @@ export default function App() {
           <button 
             onClick={() => { triggerHaptic('light'); setActiveTab('schedule'); }}
             className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer relative overflow-hidden select-none",
+              "flex flex-col items-center gap-1.5 py-1 px-4 rounded-2xl transition-all duration-200 cursor-pointer select-none",
               activeTab === 'schedule' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
             )}
           >
-            <md-ripple></md-ripple>
             <div className={cn(
               "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
-              activeTab === 'schedule' ? "bg-g-primary-container text-g-primary scale-105" : "bg-transparent"
+              activeTab === 'schedule' ? "bg-g-primary-container text-g-primary scale-105 font-bold" : "bg-transparent"
             )}>
               <Clock size={20} className={activeTab === 'schedule' ? "stroke-[2.5]" : "stroke-[1.5]"} />
             </div>
             <span className="text-[9.5px] font-bold tracking-wider uppercase leading-none">Calendar</span>
           </button>
-
-          <button 
-            onClick={() => { triggerHaptic('light'); setActiveTab('geofence'); }}
-            className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-3 rounded-2xl transition-all duration-200 cursor-pointer relative overflow-hidden select-none",
-              activeTab === 'geofence' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
-            )}
-          >
-            <md-ripple></md-ripple>
-            <div className={cn(
-              "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
-              activeTab === 'geofence' ? "bg-g-primary-container text-g-primary scale-105" : "bg-transparent"
-            )}>
-              <Landmark size={20} className={activeTab === 'geofence' ? "stroke-[2.5]" : "stroke-[1.5]"} />
-            </div>
-            <span className="text-[9.5px] font-bold tracking-wider uppercase leading-none">Radar HUD</span>
-          </button>
         </nav>
 
-        {/* geofence automatic Check-in Success Banner notification with Material Spring */}
-        <AnimatePresence>
-          {showCheckInOverlay && (
-            <div className="fixed top-8 left-4 right-4 z-[100] flex justify-center pointer-events-none">
-              <motion.div
-                initial={{ opacity: 0, y: -45, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -30, scale: 0.95 }}
-                transition={{ type: "spring", damping: 20, stiffness: 220 }}
-                className="w-full max-w-sm p-4.5 bg-g-primary text-white dark:text-[#202124] rounded-3xl shadow-elevation-3 flex items-center gap-4.5 border border-white/10 dark:border-black/5"
-              >
-                <div className="w-10 h-10 rounded-full bg-white/20 dark:bg-black/10 flex items-center justify-center shrink-0 animate-bounce">
-                  <CheckCircle2 size={22} className="text-white dark:text-[#202124]" />
-                </div>
-                
-                <div className="flex-1 min-w-0 text-left">
-                  <span className="text-[9px] font-bold text-white/70 dark:text-[#202124]/70 uppercase tracking-[0.25em] block leading-none mb-1">GEOFENCE CHECK-IN</span>
-                  <h4 className="text-[15px] font-black font-display tracking-tight leading-none truncate">{showCheckInOverlay.city}</h4>
-                  <span className="text-[9.5px] font-bold opacity-80 block mt-1.5 uppercase leading-none">Arrived • Destination logged!</span>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* Add Location Bottom Sheet with Material Spring */}
+        {/* Add Location Bottom Sheet */}
         <AnimatePresence>
           {isAdding && (
             <div className="fixed inset-0 z-50 flex items-end justify-center">
@@ -1081,30 +818,6 @@ export default function App() {
                       onChange={e => setNewLoc({ ...newLoc, kanji: e.target.value })} 
                       className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
                     />
-                  </div>
-                  
-                  {/* Coords inputs */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Latitude</label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. 35.6563"
-                        value={newLoc.lat} 
-                        onChange={e => setNewLoc({ ...newLoc, lat: e.target.value })} 
-                        className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Longitude</label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. 139.6995"
-                        value={newLoc.lng} 
-                        onChange={e => setNewLoc({ ...newLoc, lng: e.target.value })} 
-                        className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
-                      />
-                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -1164,7 +877,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Profile Modal with Material Spring */}
+        {/* Profile Modal */}
         <AnimatePresence>
           {isProfileOpen && (
             <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:p-6">
@@ -1204,7 +917,8 @@ export default function App() {
                 {/* Body Content */}
                 <div className="space-y-5">
                   {/* Traveler Details Card */}
-                  <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl flex items-center gap-4">
+                  <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+                    <md-elevation></md-elevation>
                     <div className="w-12 h-12 rounded-[16px] rounded-bl-[6px] bg-g-primary-container text-g-primary flex items-center justify-center font-display font-black text-lg">
                       JD
                     </div>
@@ -1215,7 +929,8 @@ export default function App() {
                   </div>
 
                   {/* Budget Card */}
-                  <div className="p-6 bg-g-primary-container/10 border border-g-primary/10 rounded-2xl">
+                  <div className="p-6 bg-g-primary-container/10 border border-g-primary/10 rounded-2xl relative overflow-hidden">
+                    <md-elevation></md-elevation>
                     <span className="text-[9px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-2">Total Remaining Budget</span>
                     <div className="text-3.5xl font-black tracking-tight text-g-primary font-display mb-1.5 leading-none">
                       ¥{totalBudget.toLocaleString()}
