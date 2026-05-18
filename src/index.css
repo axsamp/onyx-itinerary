@@ -137,3 +137,53 @@
     transition: 0s;
   }
 }
+
+/* Official Google Material 3 Web Component Tokens & Custom Overrides */
+md-filled-text-field {
+  --md-filled-text-field-container-color: rgba(128, 128, 128, 0.08);
+  --md-filled-text-field-input-text-color: var(--theme-g-text);
+  --md-filled-text-field-label-text-color: var(--theme-g-text-variant);
+  --md-filled-text-field-focus-label-text-color: var(--theme-g-primary);
+  --md-filled-text-field-active-indicator-color: var(--theme-g-primary);
+  --md-filled-text-field-focus-active-indicator-color: var(--theme-g-primary);
+  --md-filled-text-field-container-shape: 16px;
+  width: 100%;
+}
+
+.dark md-filled-text-field {
+  --md-filled-text-field-container-color: rgba(255, 255, 255, 0.05);
+}
+
+md-filled-button {
+  --md-filled-button-container-color: var(--theme-g-primary);
+  --md-filled-button-label-text-color: var(--theme-g-bg);
+  --md-filled-button-container-shape: 16px;
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+md-text-button {
+  --md-text-button-label-text-color: var(--theme-g-primary);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+}
+
+md-tabs {
+  --md-tabs-active-indicator-color: var(--theme-g-primary);
+  --md-tabs-active-label-text-color: var(--theme-g-primary);
+  --md-tabs-active-icon-color: var(--theme-g-primary);
+  --md-tabs-inactive-label-text-color: var(--theme-g-text-variant);
+  --md-tabs-inactive-icon-color: var(--theme-g-text-variant);
+  --md-tabs-container-color: transparent;
+}
+
+md-dialog {
+  --md-dialog-container-color: var(--theme-g-surface);
+  --md-dialog-headline-color: var(--theme-g-text);
+  --md-dialog-supporting-text-color: var(--theme-g-text-variant);
+  --md-dialog-container-shape: 32px;
+}
+

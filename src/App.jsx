@@ -13,6 +13,12 @@ import '@material/web/icon/icon.js';
 import '@material/web/ripple/ripple.js';
 import '@material/web/switch/switch.js';
 import '@material/web/elevation/elevation.js';
+import '@material/web/textfield/filled-text-field.js';
+import '@material/web/button/filled-button.js';
+import '@material/web/button/text-button.js';
+import '@material/web/dialog/dialog.js';
+import '@material/web/tabs/tabs.js';
+import '@material/web/tabs/primary-tab.js';
 
 function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -772,276 +778,165 @@ export default function App() {
         {/* Global Bottom Navigation Safety Spacer */}
         <div className="h-28 w-full shrink-0"></div>
 
-        {/* Material 3 Bottom Navigation Bar */}
-        <nav className="fixed bottom-0 left-0 right-0 h-20 bg-g-surface/85 backdrop-blur-md border-t border-g-outline/10 flex items-center justify-around px-12 z-40 pb-safe shadow-elevation-3 select-none">
-          <button 
-            onClick={() => { triggerHaptic('light'); setActiveTab('destinations'); }}
-            className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-4 rounded-2xl transition-all duration-200 cursor-pointer select-none",
-              activeTab === 'destinations' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
-            )}
-          >
-            <div className={cn(
-              "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
-              activeTab === 'destinations' ? "bg-g-primary-container text-g-primary scale-105 font-bold" : "bg-transparent"
-            )}>
-              <MapPin size={20} className={activeTab === 'destinations' ? "stroke-[2.5]" : "stroke-[1.5]"} />
-            </div>
-            <span className="text-[9.5px] font-bold tracking-wider uppercase leading-none">Map Nodes</span>
-          </button>
-
-          <button 
-            onClick={() => { triggerHaptic('light'); setActiveTab('schedule'); }}
-            className={cn(
-              "flex flex-col items-center gap-1.5 py-1 px-4 rounded-2xl transition-all duration-200 cursor-pointer select-none",
-              activeTab === 'schedule' ? "text-g-primary" : "text-g-text-variant hover:text-g-text"
-            )}
-          >
-            <div className={cn(
-              "w-12 h-7 rounded-full flex items-center justify-center transition-all duration-200",
-              activeTab === 'schedule' ? "bg-g-primary-container text-g-primary scale-105 font-bold" : "bg-transparent"
-            )}>
-              <Clock size={20} className={activeTab === 'schedule' ? "stroke-[2.5]" : "stroke-[1.5]"} />
-            </div>
-            <span className="text-[9.5px] font-bold tracking-wider uppercase leading-none">Calendar</span>
-          </button>
+        {/* Material 3 Bottom Navigation Bar with sliding active indicators */}
+        <nav className="fixed bottom-0 left-0 right-0 h-20 bg-g-surface/85 backdrop-blur-md border-t border-g-outline/10 flex items-center justify-center z-40 pb-safe shadow-elevation-3 select-none">
+          <md-tabs activeIndex={activeTab === 'destinations' ? 0 : 1} style={{ width: '100%', maxWidth: '360px' }}>
+            <md-primary-tab onClick={() => { triggerHaptic('light'); setActiveTab('destinations'); }}>
+              <span className="material-symbols-outlined select-none" slot="icon">map</span>
+              Map Nodes
+            </md-primary-tab>
+            <md-primary-tab onClick={() => { triggerHaptic('light'); setActiveTab('schedule'); }}>
+              <span className="material-symbols-outlined select-none" slot="icon">calendar_today</span>
+              Calendar
+            </md-primary-tab>
+          </md-tabs>
         </nav>
 
-        {/* Add Location Bottom Sheet */}
-        <AnimatePresence>
-          {isAdding && (
-            <div className="fixed inset-0 z-50 flex items-end justify-center">
-              {/* Dimmed backdrop */}
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }} 
-                onClick={() => { triggerHaptic(); setIsAdding(false); }} 
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
-              />
-              
-              {/* Premium Frosted Glass Bottom Sheet */}
-              <motion.div 
-                initial={{ opacity: 0, y: '100%' }} 
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: '100%' }} 
-                transition={{ type: "spring", damping: 26, stiffness: 280 }} 
-                className="relative w-full max-w-lg bg-white/80 dark:bg-g-surface/80 backdrop-blur-xl border border-g-outline/15 rounded-t-[40px] rounded-b-[24px] p-6 md:p-8 shadow-2xl flex flex-col space-y-6 z-10 max-h-[85vh] overflow-y-auto no-scrollbar transition-colors duration-700"
-              >
-                {/* Header status bar */}
-                <div className="w-full flex justify-between items-center border-b border-g-outline/10 pb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-g-primary animate-pulse" />
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-g-text-variant uppercase">New Destination</span>
-                  </div>
-                  <button 
-                    onClick={() => { triggerHaptic('light'); setIsAdding(false); }} 
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-g-aluminium dark:bg-g-aluminium/10 text-g-text hover:bg-g-primary-container hover:text-g-primary transition-colors cursor-pointer relative overflow-hidden"
-                  >
-                    <md-ripple></md-ripple>
-                    <X size={20} />
-                  </button>
-                </div>
+        {/* Native M3 Add Location Dialog */}
+        <md-dialog
+          open={isAdding ? true : undefined}
+          onClose={() => setIsAdding(false)}
+          style={{ width: '90%', maxWidth: '440px' }}
+        >
+          <div slot="headline" className="font-display font-black text-g-text text-xl">New Destination</div>
+          
+          <div slot="content" className="space-y-4 pt-3 flex flex-col">
+            <md-filled-text-field
+              label="Destination Name"
+              value={newLoc.city}
+              onInput={e => setNewLoc({ ...newLoc, city: e.target.value })}
+            ></md-filled-text-field>
 
-                {/* Form fields */}
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Destination Name</label>
-                    <input 
-                      type="text" 
-                      value={newLoc.city} 
-                      onChange={e => setNewLoc({ ...newLoc, city: e.target.value })} 
-                      className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Kanji / Japanese</label>
-                    <input 
-                      type="text" 
-                      value={newLoc.kanji} 
-                      onChange={e => setNewLoc({ ...newLoc, kanji: e.target.value })} 
-                      className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
-                    />
-                  </div>
+            <md-filled-text-field
+              label="Kanji / Japanese"
+              value={newLoc.kanji}
+              onInput={e => setNewLoc({ ...newLoc, kanji: e.target.value })}
+            ></md-filled-text-field>
 
-                  {/* Date Input translates selector values dynamically to relative integers */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Set Target Date</label>
-                    <input 
-                      type="date" 
-                      onChange={e => {
-                        if (!e.target.value) {
-                          setNewLoc({ ...newLoc, dayOffset: null });
-                          return;
-                        }
-                        const base = new Date(tripStartDate);
-                        const target = new Date(e.target.value);
-                        const diffTime = target - base;
-                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-                        setNewLoc({ ...newLoc, dayOffset: diffDays });
-                      }}
-                      className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
-                    />
-                  </div>
+            <md-filled-text-field
+              type="date"
+              label="Set Target Date"
+              onInput={e => {
+                if (!e.target.value) {
+                  setNewLoc({ ...newLoc, dayOffset: null });
+                  return;
+                }
+                const base = new Date(tripStartDate);
+                const target = new Date(e.target.value);
+                const diffTime = target - base;
+                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                setNewLoc({ ...newLoc, dayOffset: diffDays });
+              }}
+            ></md-filled-text-field>
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Budget (¥)</label>
-                    <input 
-                      type="number" 
-                      value={newLoc.budget} 
-                      onChange={e => setNewLoc({ ...newLoc, budget: parseInt(e.target.value) || 0 })} 
-                      className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-mono font-bold focus:outline-none focus:border-g-primary transition-colors" 
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Category</label>
-                    <div className="relative">
-                      <select 
-                        value={newLoc.category} 
-                        onChange={e => setNewLoc({ ...newLoc, category: e.target.value })} 
-                        className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors appearance-none"
-                      >
-                        <option>Urban</option>
-                        <option>Nature</option>
-                        <option>Historical</option>
-                        <option>Entertainment</option>
-                        <option>Retail</option>
-                        <option>Hotel</option>
-                        <option>Transit</option>
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-g-text-variant">
-                        <ChevronDown size={18} />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Priority (1 - 5)</label>
-                    <input 
-                      type="number" 
-                      min="1" 
-                      max="5" 
-                      value={newLoc.priority} 
-                      onChange={e => setNewLoc({ ...newLoc, priority: Math.max(1, Math.min(5, parseInt(e.target.value) || 5)) })} 
-                      className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
-                    />
-                  </div>
-                </div>
+            <md-filled-text-field
+              type="number"
+              label="Budget (¥)"
+              value={newLoc.budget || ""}
+              onInput={e => setNewLoc({ ...newLoc, budget: parseInt(e.target.value) || 0 })}
+            ></md-filled-text-field>
 
-                <div className="pt-4">
-                  <button 
-                    onClick={handleAddLocation} 
-                    className="w-full h-16 bg-g-primary text-white dark:text-[#202124] font-display font-black text-sm tracking-widest uppercase rounded-2xl shadow-elevation-2 hover:brightness-110 active:scale-95 transition-all duration-200 ripple flex items-center justify-center cursor-pointer relative overflow-hidden"
-                  >
-                    <md-ripple></md-ripple>
-                    Commit Node
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* Profile Modal */}
-        <AnimatePresence>
-          {isProfileOpen && (
-            <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:p-6">
-              {/* Dark Backing Blur */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsProfileOpen(false)}
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-              />
-
-              {/* Frosted Glass Bottom Sheet Dialog */}
-              <motion.div
-                initial={{ opacity: 0, y: '100%' }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: '100%' }}
-                transition={{ type: "spring", damping: 26, stiffness: 280 }}
-                className="relative w-full max-w-lg bg-white/80 dark:bg-g-surface/80 backdrop-blur-xl border border-g-outline/15 rounded-t-[40px] rounded-b-[24px] p-6 md:p-8 shadow-2xl flex flex-col space-y-6 z-10 max-h-[85vh] overflow-y-auto no-scrollbar transition-colors duration-700"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Header status bar */}
-                <div className="w-full flex justify-between items-center border-b border-g-outline/10 pb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-g-primary animate-pulse" />
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-g-text-variant uppercase">Travel Profile</span>
-                  </div>
-                  <button
-                    onClick={() => { triggerHaptic('light'); setIsProfileOpen(false); }}
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-g-aluminium dark:bg-g-aluminium/10 text-g-text hover:bg-g-primary-container hover:text-g-primary transition-colors cursor-pointer relative overflow-hidden"
-                  >
-                    <md-ripple></md-ripple>
-                    <X size={20} />
-                  </button>
-                </div>
-
-                {/* Body Content */}
-                <div className="space-y-5">
-                  {/* Traveler Details Card */}
-                  <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl flex items-center gap-4 relative overflow-hidden">
-                    <md-elevation></md-elevation>
-                    <div className="w-12 h-12 rounded-[16px] rounded-bl-[6px] bg-g-primary-container text-g-primary flex items-center justify-center font-display font-black text-lg">
-                      JD
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-g-text">JD</div>
-                      <div className="text-[10px] font-medium text-g-text-variant uppercase tracking-wider">Primary Traveler</div>
-                    </div>
-                  </div>
-
-                  {/* Synchronization telemetry card */}
-                  <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl space-y-3 relative overflow-hidden">
-                    <md-elevation></md-elevation>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-wider">Sync Status</span>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/10 text-[8px] font-bold uppercase tracking-wider">
-                        Active Local Link
-                      </span>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <div>
-                        <span className="text-[8px] font-bold text-g-text-variant uppercase block">Linked Start Date</span>
-                        <span className="font-mono text-xs font-black text-g-text">{tripStartDate}</span>
-                      </div>
-                      <div>
-                        <span className="text-[8px] font-bold text-g-text-variant uppercase block">Privacy Mode</span>
-                        <span className="font-mono text-xs font-black text-emerald-500">100% Offline</span>
-                      </div>
-                    </div>
-                    <p className="text-[9.5px] text-g-text-variant leading-relaxed pt-1.5 border-t border-g-outline/10">
-                      🛡️ Real JST dates are read directly from your browser's private offline storage. GitHub and third parties never see your real itinerary dates.
-                    </p>
-                  </div>
-
-                  {/* Budget Card */}
-                  <div className="p-6 bg-g-primary-container/10 border border-g-primary/10 rounded-2xl relative overflow-hidden">
-                    <md-elevation></md-elevation>
-                    <span className="text-[9px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-2">Total Remaining Budget</span>
-                    <div className="text-3.5xl font-black tracking-tight text-g-primary font-display mb-1.5 leading-none">
-                      ¥{totalBudget.toLocaleString()}
-                    </div>
-                    <p className="text-[10px] font-medium text-g-text-variant leading-relaxed">
-                      The sum of your planned budget for all pending (unvisited) locations on your itinerary.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Close Button */}
-                <button
-                  onClick={() => { triggerHaptic('medium'); setIsProfileOpen(false); }}
-                  className="w-full py-4 bg-g-primary text-white dark:text-[#202124] font-bold rounded-2xl shadow-elevation-2 hover:bg-g-primary/95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 ripple mt-4 cursor-pointer relative overflow-hidden"
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Category</label>
+              <div className="relative">
+                <select 
+                  value={newLoc.category} 
+                  onChange={e => setNewLoc({ ...newLoc, category: e.target.value })} 
+                  className="w-full py-3.5 px-4 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors appearance-none"
                 >
-                  <md-ripple></md-ripple>
-                  <span>Close Profile</span>
-                </button>
-              </motion.div>
+                  <option>Urban</option>
+                  <option>Nature</option>
+                  <option>Historical</option>
+                  <option>Entertainment</option>
+                  <option>Retail</option>
+                  <option>Hotel</option>
+                  <option>Transit</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-g-text-variant">
+                  <ChevronDown size={18} />
+                </div>
+              </div>
             </div>
-          )}
-        </AnimatePresence>
+
+            <md-filled-text-field
+              type="number"
+              min="1"
+              max="5"
+              label="Priority (1 - 5)"
+              value={newLoc.priority}
+              onInput={e => setNewLoc({ ...newLoc, priority: Math.max(1, Math.min(5, parseInt(e.target.value) || 5)) })}
+            ></md-filled-text-field>
+          </div>
+
+          <div slot="actions">
+            <md-text-button onClick={() => setIsAdding(false)}>Cancel</md-text-button>
+            <md-filled-button onClick={handleAddLocation}>Commit Node</md-filled-button>
+          </div>
+        </md-dialog>
+
+        {/* Native M3 Profile Dialog */}
+        <md-dialog 
+          open={isProfileOpen ? true : undefined} 
+          onClose={() => setIsProfileOpen(false)}
+          style={{ width: '90%', maxWidth: '420px' }}
+        >
+          <div slot="headline" className="font-display font-black text-g-text text-xl">Travel Profile</div>
+          
+          <div slot="content" className="space-y-5 pt-3 flex flex-col">
+            {/* Traveler Details Card */}
+            <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl flex items-center gap-4 relative overflow-hidden">
+              <md-elevation></md-elevation>
+              <div className="w-12 h-12 rounded-[16px] rounded-bl-[6px] bg-g-primary-container text-g-primary flex items-center justify-center font-display font-black text-lg">
+                JD
+              </div>
+              <div>
+                <div className="text-sm font-bold text-g-text">JD</div>
+                <div className="text-[10px] font-medium text-g-text-variant uppercase tracking-wider">Primary Traveler</div>
+              </div>
+            </div>
+
+            {/* Synchronization telemetry card */}
+            <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl space-y-3 relative overflow-hidden">
+              <md-elevation></md-elevation>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-wider">Sync Status</span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/10 text-[8px] font-bold uppercase tracking-wider">
+                  Active Local Link
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div>
+                  <span className="text-[8px] font-bold text-g-text-variant uppercase block">Linked Start Date</span>
+                  <span className="font-mono text-xs font-black text-g-text">{tripStartDate}</span>
+                </div>
+                <div>
+                  <span className="text-[8px] font-bold text-g-text-variant uppercase block">Privacy Mode</span>
+                  <span className="font-mono text-xs font-black text-emerald-500">100% Offline</span>
+                </div>
+              </div>
+              <p className="text-[9.5px] text-g-text-variant leading-relaxed pt-1.5 border-t border-g-outline/10">
+                🛡️ Real JST dates are read directly from your browser's private offline storage. GitHub and third parties never see your real itinerary dates.
+              </p>
+            </div>
+
+            {/* Budget Card */}
+            <div className="p-6 bg-g-primary-container/10 border border-g-primary/10 rounded-2xl relative overflow-hidden">
+              <md-elevation></md-elevation>
+              <span className="text-[9px] font-bold text-g-primary uppercase tracking-[0.2em] block mb-2">Total Remaining Budget</span>
+              <div className="text-3.5xl font-black tracking-tight text-g-primary font-display mb-1.5 leading-none">
+                ¥{totalBudget.toLocaleString()}
+              </div>
+              <p className="text-[10px] font-medium text-g-text-variant leading-relaxed">
+                The sum of your planned budget for all pending (unvisited) locations on your itinerary.
+              </p>
+            </div>
+          </div>
+
+          <div slot="actions">
+            <md-text-button onClick={() => setIsProfileOpen(false)}>Close</md-text-button>
+          </div>
+        </md-dialog>
 
       </div>
     </div>
