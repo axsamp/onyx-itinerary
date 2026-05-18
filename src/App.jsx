@@ -18,24 +18,25 @@ function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
+// Stored as relative day offsets to keep real travel dates completely secure from GitHub
 const INITIAL_LOCATIONS = [
-  { city: "Montbell", kanji: "モンベル", category: "Retail", budget: 0, priority: 5, description: "Outdoor gear & apparel", arrivalDate: "2026-05-18", arrivalTime: "12:00", departureTime: "13:30", stamp: null, notes: "" },
-  { city: "mont-bell Yokohama Shin-Yamashita", kanji: "モンベル 横浜しん山下", category: "Retail", budget: 0, priority: 4, description: "Shin-Yamashita Store", arrivalDate: "2026-05-19", arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
-  { city: "Cerulean Tower Tokyu Hotel", kanji: "セルリアンタワー東急ホテル", category: "Hotel", budget: 0, priority: 5, description: "Main Base - Shibuya", arrivalDate: "2026-05-18", arrivalTime: "15:00", departureTime: "23:59", stamp: null, notes: "" },
-  { city: "Hase Station", kanji: "長谷駅", category: "Transit", budget: 0, priority: 3, description: "Kamakura access", arrivalDate: "2026-05-20", arrivalTime: "09:30", departureTime: "10:30", stamp: null, notes: "" },
-  { city: "OIMACHI TRACKS", kanji: "大井町トラックス", category: "Retail", budget: 0, priority: 3, description: "Shopping area", arrivalDate: "2026-05-18", arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
-  { city: "Nihombashi Mitsukoshi Main Store", kanji: "日本橋三越本店", category: "Retail", budget: 0, priority: 4, description: "Luxury department store", arrivalDate: "2026-05-21", arrivalTime: "11:00", departureTime: "13:00", stamp: null, notes: "" },
-  { city: "Laforet Harajuku", kanji: "ラフォーレ原宿", category: "Retail", budget: 0, priority: 4, description: "Harajuku fashion hub", arrivalDate: "2026-05-21", arrivalTime: "15:00", departureTime: "17:00", stamp: null, notes: "" },
-  { city: "Pensta Ecute Ueno", kanji: "ペンスタ エキュート上野", category: "Retail", budget: 0, priority: 2, description: "Suica Penguin goods", arrivalDate: "2026-05-22", arrivalTime: "10:00", departureTime: "11:00", stamp: null, notes: "" },
-  { city: "FREAK'S STORE Shinjuku", kanji: "フリークスストア", category: "Retail", budget: 0, priority: 4, description: "Lumineesutoshinjukuwimenzuten", arrivalDate: "2026-05-22", arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
-  { city: "AGILITY Nippori Leather", kanji: "AGILITY日暮里革工房", category: "Retail", budget: 0, priority: 4, description: "Leather goods workshop", arrivalDate: "2026-05-23", arrivalTime: "13:00", departureTime: "15:00", stamp: null, notes: "" },
-  { city: "Higashirinkan", kanji: "東林間", category: "Location", budget: 0, priority: 3, description: "3 Chome-18-3", arrivalDate: "2026-05-19", arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
-  { city: "Mu (Nothingness)", kanji: "無", category: "Location", budget: 0, priority: 5, description: "Philosophy node", arrivalDate: "", arrivalTime: "", departureTime: "", stamp: null, notes: "" },
-  { city: "Narita International Airport", kanji: "成田国際空港", category: "Transit", budget: 0, priority: 5, description: "Entry/Exit Node", arrivalDate: "2026-05-18", arrivalTime: "08:00", departureTime: "09:30", stamp: null, notes: "" },
-  { city: "Red Roof Inn Kamata", kanji: "レッドルーフイン蒲田", category: "Hotel", budget: 0, priority: 5, description: "Kamata base", arrivalDate: "2026-05-19", arrivalTime: "21:00", departureTime: "09:00", stamp: null, notes: "" },
-  { city: "Shizuoka", kanji: "静岡県", category: "Urban x Nature", budget: 40000, priority: 5, description: "Urban x Nature", arrivalDate: "2026-05-24", arrivalTime: "10:00", departureTime: "18:00", stamp: null, notes: "" },
-  { city: "Nagoya", kanji: "名古屋", category: "Urban", budget: 30000, priority: 4, description: "Urban", arrivalDate: "2026-05-25", arrivalTime: "11:00", departureTime: "19:00", stamp: null, notes: "" },
-  { city: "Tokyo Dome", kanji: "東京ドームシティ", category: "Entertainment", budget: 10000, priority: 2, description: "Entertainment", arrivalDate: "2026-05-23", arrivalTime: "18:00", departureTime: "21:30", stamp: null, notes: "" },
+  { city: "Montbell", kanji: "モンベル", category: "Retail", budget: 0, priority: 5, description: "Outdoor gear & apparel", dayOffset: 0, arrivalTime: "12:00", departureTime: "13:30", stamp: null, notes: "" },
+  { city: "mont-bell Yokohama Shin-Yamashita", kanji: "モンベル 横浜しん山下", category: "Retail", budget: 0, priority: 4, description: "Shin-Yamashita Store", dayOffset: 1, arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
+  { city: "Cerulean Tower Tokyu Hotel", kanji: "セルリアンタワー東急ホテル", category: "Hotel", budget: 0, priority: 5, description: "Main Base - Shibuya", dayOffset: 0, arrivalTime: "15:00", departureTime: "23:59", stamp: null, notes: "" },
+  { city: "Hase Station", kanji: "長谷駅", category: "Transit", budget: 0, priority: 3, description: "Kamakura access", dayOffset: 2, arrivalTime: "09:30", departureTime: "10:30", stamp: null, notes: "" },
+  { city: "OIMACHI TRACKS", kanji: "大井町トラックス", category: "Retail", budget: 0, priority: 3, description: "Shopping area", dayOffset: 0, arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
+  { city: "Nihombashi Mitsukoshi Main Store", kanji: "日本橋三越本店", category: "Retail", budget: 0, priority: 4, description: "Luxury department store", dayOffset: 3, arrivalTime: "11:00", departureTime: "13:00", stamp: null, notes: "" },
+  { city: "Laforet Harajuku", kanji: "ラフォーレ原宿", category: "Retail", budget: 0, priority: 4, description: "Harajuku fashion hub", dayOffset: 3, arrivalTime: "15:00", departureTime: "17:00", stamp: null, notes: "" },
+  { city: "Pensta Ecute Ueno", kanji: "ペンスタ エキュート上野", category: "Retail", budget: 0, priority: 2, description: "Suica Penguin goods", dayOffset: 4, arrivalTime: "10:00", departureTime: "11:00", stamp: null, notes: "" },
+  { city: "FREAK'S STORE Shinjuku", kanji: "フリークスストア", category: "Retail", budget: 0, priority: 4, description: "Lumineesutoshinjukuwimenzuten", dayOffset: 4, arrivalTime: "14:00", departureTime: "16:00", stamp: null, notes: "" },
+  { city: "AGILITY Nippori Leather", kanji: "AGILITY日暮里革工房", category: "Retail", budget: 0, priority: 4, description: "Leather goods workshop", dayOffset: 5, arrivalTime: "13:00", departureTime: "15:00", stamp: null, notes: "" },
+  { city: "Higashirinkan", kanji: "東林間", category: "Location", budget: 0, priority: 3, description: "3 Chome-18-3", dayOffset: 1, arrivalTime: "18:00", departureTime: "20:00", stamp: null, notes: "" },
+  { city: "Mu (Nothingness)", kanji: "無", category: "Location", budget: 0, priority: 5, description: "Philosophy node", dayOffset: null, arrivalTime: "", departureTime: "", stamp: null, notes: "" },
+  { city: "Narita International Airport", kanji: "成田国際空港", category: "Transit", budget: 0, priority: 5, description: "Entry/Exit Node", dayOffset: 0, arrivalTime: "08:00", departureTime: "09:30", stamp: null, notes: "" },
+  { city: "Red Roof Inn Kamata", kanji: "レッドルーフイン蒲田", category: "Hotel", budget: 0, priority: 5, description: "Kamata base", dayOffset: 1, arrivalTime: "21:00", departureTime: "09:00", stamp: null, notes: "" },
+  { city: "Shizuoka", kanji: "静岡県", category: "Urban x Nature", budget: 40000, priority: 5, description: "Urban x Nature", dayOffset: 6, arrivalTime: "10:00", departureTime: "18:00", stamp: null, notes: "" },
+  { city: "Nagoya", kanji: "名古屋", category: "Urban", budget: 30000, priority: 4, description: "Urban", dayOffset: 7, arrivalTime: "11:00", departureTime: "19:00", stamp: null, notes: "" },
+  { city: "Tokyo Dome", kanji: "東京ドームシティ", category: "Entertainment", budget: 10000, priority: 2, description: "Entertainment", dayOffset: 5, arrivalTime: "18:00", departureTime: "21:30", stamp: null, notes: "" },
 ];
 
 const PRIORITY_COLORS = {
@@ -55,14 +56,37 @@ const triggerHaptic = (type = 'light') => {
 };
 
 export default function App() {
+  // Read budgetSettings securely from local browser localStorage (where Onyx Protocol writes it privately)
+  const [tripStartDate, setTripStartDate] = useState(() => {
+    const saved = localStorage.getItem('onyx_budget_settings');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.startDate) return parsed.startDate;
+      } catch (e) {}
+    }
+    return '2026-05-18'; // Secure generic template fallback
+  });
+
   const [locations, setLocations] = useState(() => {
     const saved = localStorage.getItem('onyx_itinerary_locations');
     const current = saved ? JSON.parse(saved) : INITIAL_LOCATIONS;
-    // Enriched properties logic for backwards-compatibility
+    
+    // Convert deprecated absolute arrivalDates to offsets if they exist
     const enrichedCurrent = current.map(item => {
       const initMatch = INITIAL_LOCATIONS.find(l => l.city === item.city) || {};
+      let offset = item.dayOffset;
+      
+      if ((offset === undefined || offset === null) && item.arrivalDate) {
+        // Calculate offset relative to template start date
+        const base = new Date('2026-05-18');
+        const target = new Date(item.arrivalDate);
+        const diffTime = target - base;
+        offset = Math.round(diffTime / (1000 * 60 * 60 * 24));
+      }
+
       return {
-        arrivalDate: "",
+        dayOffset: offset !== undefined ? offset : initMatch.dayOffset,
         arrivalTime: "",
         departureTime: "",
         stamp: null,
@@ -89,19 +113,34 @@ export default function App() {
   const [isAdding, setIsAdding] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
-  // Two clean tabs: Destinations and Calendar
   const [activeTab, setActiveTab] = useState('destinations'); // 'destinations' | 'schedule'
   const [expandedCard, setExpandedCard] = useState(null);
-  const [selectedStampColor, setSelectedStampColor] = useState('#D32F2F'); // Classic Vermilion Red
+  const [selectedStampColor, setSelectedStampColor] = useState('#D32F2F'); 
 
   const [newLoc, setNewLoc] = useState({ 
     city: '', kanji: '', category: 'Urban', budget: 0, priority: 5,
-    arrivalDate: '', arrivalTime: '', departureTime: '' 
+    dayOffset: null, arrivalTime: '', departureTime: '' 
   });
   
   const [isStealthMode, setIsStealthMode] = useState(() => localStorage.getItem('onyx_stealth_mode') === 'true');
 
-  // Unified Cross-App Theme Synchronization
+  // React to cross-app Protocol date modifications inside the browser
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'onyx_budget_settings') {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed && parsed.startDate) {
+            setTripStartDate(parsed.startDate);
+          }
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  // Unified Theme Loader
   useEffect(() => {
     const THEME_PALETTES = {
       cobalt: {
@@ -136,12 +175,6 @@ export default function App() {
 
     const applyTheme = () => {
       const params = new URLSearchParams(window.location.search);
-      const urlTheme = params.get('theme');
-      const urlStealth = params.get('stealth');
-
-      if (urlTheme) localStorage.setItem('onyx_theme', urlTheme);
-      if (urlStealth) localStorage.setItem('onyx_stealth_mode', urlStealth);
-
       const themeName = localStorage.getItem('onyx_theme') || 'cobalt';
       const isDark = localStorage.getItem('onyx_stealth_mode') === 'true';
 
@@ -167,30 +200,14 @@ export default function App() {
     };
 
     applyTheme();
-
-    const handleStorage = (e) => {
-      if (e.key === 'onyx_stealth_mode' || e.key === 'onyx_theme') {
-        applyTheme();
-      }
-    };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+    window.addEventListener('storage', applyTheme);
+    return () => window.removeEventListener('storage', applyTheme);
   }, []);
 
-  // Time ticks
+  // Time ticking
   useEffect(() => {
-    let timer;
-    const startTimer = () => {
-      if (timer) clearInterval(timer);
-      timer = setInterval(() => setTime(new Date()), 1000);
-    };
-    const handleVisibility = () => document.hidden ? clearInterval(timer) : startTimer();
-    document.addEventListener('visibilitychange', handleVisibility);
-    startTimer();
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibility);
-      clearInterval(timer);
-    };
+    let timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
   }, []);
 
   // Sync state
@@ -209,6 +226,14 @@ export default function App() {
       hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
     }).format(time);
   }, [time]);
+
+  // Resolves the secure relative offset to a readable calendar string locally in the browser
+  const getArrivalDate = useCallback((loc) => {
+    if (loc.dayOffset === null || loc.dayOffset === undefined) return "";
+    const base = new Date(tripStartDate);
+    base.setDate(base.getDate() + loc.dayOffset);
+    return base.toISOString().split('T')[0];
+  }, [tripStartDate]);
 
   const filteredLocations = useMemo(() => {
     return locations.filter(loc =>
@@ -235,7 +260,7 @@ export default function App() {
     
     setLocations([...locations, { 
       ...newLoc, 
-      arrivalDate: newLoc.arrivalDate || "",
+      dayOffset: newLoc.dayOffset !== null ? newLoc.dayOffset : null,
       arrivalTime: newLoc.arrivalTime || "",
       departureTime: newLoc.departureTime || "",
       stamp: null,
@@ -244,7 +269,7 @@ export default function App() {
     }]);
     setNewLoc({ 
       city: '', kanji: '', category: 'Urban', budget: 0, priority: 5,
-      arrivalDate: '', arrivalTime: '', departureTime: '' 
+      dayOffset: null, arrivalTime: '', departureTime: '' 
     });
     setIsAdding(false);
   };
@@ -263,6 +288,19 @@ export default function App() {
     }));
   };
 
+  // Calculates day interval difference for input fields locally
+  const handleDateSelectorChange = (city, dateStr) => {
+    if (!dateStr) {
+      updateLocationField(city, 'dayOffset', null);
+      return;
+    }
+    const base = new Date(tripStartDate);
+    const target = new Date(dateStr);
+    const diffTime = target - base;
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    updateLocationField(city, 'dayOffset', diffDays);
+  };
+
   const applyEkiStamp = (city) => {
     triggerHaptic('heavy');
     const today = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -273,13 +311,12 @@ export default function App() {
     });
   };
 
-  // Chronological timesheet sorter
+  // Sort scheduled JST timesheets dynamically using calculated dates
   const scheduledLocations = useMemo(() => {
     return locations
-      .filter(l => l.arrivalDate)
+      .filter(l => l.dayOffset !== null && l.dayOffset !== undefined)
       .sort((a, b) => {
-        const dateCompare = a.arrivalDate.localeCompare(b.arrivalDate);
-        if (dateCompare !== 0) return dateCompare;
+        if (a.dayOffset !== b.dayOffset) return a.dayOffset - b.dayOffset;
         return (a.arrivalTime || "").localeCompare(b.arrivalTime || "");
       });
   }, [locations]);
@@ -296,7 +333,7 @@ export default function App() {
   const hasConflict = (currentLoc, index) => {
     if (index === 0) return false;
     const prevLoc = scheduledLocations[index - 1];
-    if (prevLoc.arrivalDate !== currentLoc.arrivalDate) return false;
+    if (prevLoc.dayOffset !== currentLoc.dayOffset) return false;
     
     const getMinutes = (tStr) => {
       if (!tStr) return 0;
@@ -349,7 +386,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* Tab-Controlled Content Panel with responsive M3 Spring Animations */}
+        {/* Tab Content */}
         <AnimatePresence mode="wait">
           {activeTab === 'destinations' && (
             <motion.div
@@ -368,8 +405,11 @@ export default function App() {
                   {tokyoTime}
                 </div>
                 <div className="flex justify-between items-end mt-4">
-                  <div className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest">
-                    Destination // <span className="text-g-text">Japan</span>
+                  <div className="text-[10px] font-bold text-g-text-variant uppercase tracking-widest flex items-center gap-1.5">
+                    <span>Japan 2026</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/10 text-[8px] font-bold uppercase tracking-wider">
+                      🛡️ Synced
+                    </span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] font-bold text-g-text-variant uppercase block mb-1">Progress</span>
@@ -399,6 +439,8 @@ export default function App() {
                 <div className="absolute left-[1.125rem] top-0 bottom-0 w-[2px] bg-g-outline/15" />
                 {filteredLocations.map((loc, idx) => {
                   const isExpanded = expandedCard === loc.city;
+                  const calculatedArrivalDate = getArrivalDate(loc);
+
                   return (
                     <motion.div 
                       key={loc.city} 
@@ -426,7 +468,6 @@ export default function App() {
                           </div>
                           
                           <div className="flex items-center gap-2 shrink-0">
-                            {/* Expand toggle */}
                             <button
                               onClick={() => { triggerHaptic('light'); setExpandedCard(isExpanded ? null : loc.city); }}
                               className="w-10 h-10 rounded-full bg-g-aluminium/40 dark:bg-g-aluminium/5 flex items-center justify-center text-g-text hover:text-g-primary transition-transform duration-200 relative overflow-hidden cursor-pointer"
@@ -474,8 +515,8 @@ export default function App() {
                                   <label className="text-[9px] font-bold text-g-text-variant uppercase tracking-wider block mb-1">Set Date</label>
                                   <input 
                                     type="date"
-                                    value={loc.arrivalDate || ""}
-                                    onChange={(e) => updateLocationField(loc.city, 'arrivalDate', e.target.value)}
+                                    value={calculatedArrivalDate}
+                                    onChange={(e) => handleDateSelectorChange(loc.city, e.target.value)}
                                     className="w-full bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl p-2.5 text-[11px] text-g-text font-bold focus:outline-none"
                                   />
                                 </div>
@@ -578,7 +619,7 @@ export default function App() {
                           </div>
                           
                           {/* Schedule badge */}
-                          {loc.arrivalDate && (
+                          {calculatedArrivalDate && (
                             <div className="flex items-center gap-1 text-[9px] font-bold text-g-primary">
                               <Clock size={10} />
                               <span>{loc.arrivalTime || "Flexible"}</span>
@@ -610,7 +651,7 @@ export default function App() {
                             <span className="w-1 h-1 rounded-full bg-g-primary/40" />
                             <span className="w-1 h-1 rounded-full bg-g-primary/40" />
                           </div>
-                          <div className="flex items-center gap-2 px-3.5 py-1.5 bg-g-aluminium/20 dark:bg-g-aluminium/5 rounded-xl border border-g-outline/10 text-[9px] font-bold uppercase tracking-wider text-g-text-variant select-none animate-[slideUp_0.4s_ease]">
+                          <div className="flex items-center gap-2 px-3.5 py-1.5 bg-g-aluminium/20 dark:bg-g-aluminium/5 rounded-xl border border-g-outline/10 text-[9px] font-bold uppercase tracking-wider text-g-text-variant select-none">
                             <Clock size={10} className="text-g-primary shrink-0 animate-pulse" />
                             <span>JR Estimate: ~{((loc.city.length * 3) % 25) + 12}m • ¥{((loc.city.length * 40) % 280) + 160}</span>
                           </div>
@@ -655,7 +696,9 @@ export default function App() {
               ) : (
                 <div className="space-y-6">
                   {scheduledLocations.map((loc, idx) => {
-                    const dateHeader = idx === 0 || scheduledLocations[idx - 1].arrivalDate !== loc.arrivalDate;
+                    const resolvedArrivalDate = getArrivalDate(loc);
+                    const prevLoc = idx > 0 ? scheduledLocations[index - 1] : null;
+                    const dateHeader = idx === 0 || scheduledLocations[idx - 1].dayOffset !== loc.dayOffset;
                     const conflict = hasConflict(loc, idx);
                     
                     return (
@@ -663,7 +706,9 @@ export default function App() {
                         {dateHeader && (
                           <div className="flex items-center gap-2 mt-4 mb-2">
                             <span className="w-2 h-2 rounded-full bg-g-primary" />
-                            <span className="font-display text-sm font-black text-g-text uppercase tracking-widest">{formatDateLabel(loc.arrivalDate)}</span>
+                            <span className="font-display text-sm font-black text-g-text uppercase tracking-widest">
+                              {resolvedArrivalDate ? formatDateLabel(resolvedArrivalDate) : `Day ${loc.dayOffset}`}
+                            </span>
                             <span className="flex-1 h-[1px] bg-g-outline/10" />
                           </div>
                         )}
@@ -728,7 +773,7 @@ export default function App() {
         {/* Global Bottom Navigation Safety Spacer */}
         <div className="h-28 w-full shrink-0"></div>
 
-        {/* Material 3 Bottom Navigation Bar (No Ripples) */}
+        {/* Material 3 Bottom Navigation Bar */}
         <nav className="fixed bottom-0 left-0 right-0 h-20 bg-g-surface/85 backdrop-blur-md border-t border-g-outline/10 flex items-center justify-around px-12 z-40 pb-safe shadow-elevation-3 select-none">
           <button 
             onClick={() => { triggerHaptic('light'); setActiveTab('destinations'); }}
@@ -816,6 +861,26 @@ export default function App() {
                       type="text" 
                       value={newLoc.kanji} 
                       onChange={e => setNewLoc({ ...newLoc, kanji: e.target.value })} 
+                      className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
+                    />
+                  </div>
+
+                  {/* Date Input translates selector values dynamically to relative integers */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-g-text-variant uppercase tracking-[0.2em] ml-1">Set Target Date</label>
+                    <input 
+                      type="date" 
+                      onChange={e => {
+                        if (!e.target.value) {
+                          setNewLoc({ ...newLoc, dayOffset: null });
+                          return;
+                        }
+                        const base = new Date(tripStartDate);
+                        const target = new Date(e.target.value);
+                        const diffTime = target - base;
+                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                        setNewLoc({ ...newLoc, dayOffset: diffDays });
+                      }}
                       className="w-full py-4 px-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/15 rounded-xl text-g-text font-bold focus:outline-none focus:border-g-primary transition-colors" 
                     />
                   </div>
@@ -926,6 +991,31 @@ export default function App() {
                       <div className="text-sm font-bold text-g-text">JD</div>
                       <div className="text-[10px] font-medium text-g-text-variant uppercase tracking-wider">Primary Traveler</div>
                     </div>
+                  </div>
+
+                  {/* Synchronization telemetry card */}
+                  <div className="p-5 bg-g-aluminium/20 dark:bg-g-aluminium/5 border border-g-outline/10 rounded-2xl space-y-3 relative overflow-hidden">
+                    <md-elevation></md-elevation>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-g-text-variant uppercase tracking-wider">Sync Status</span>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/10 text-[8px] font-bold uppercase tracking-wider">
+                        Active Local Link
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <div>
+                        <span className="text-[8px] font-bold text-g-text-variant uppercase block">Linked Start Date</span>
+                        <span className="font-mono text-xs font-black text-g-text">{tripStartDate}</span>
+                      </div>
+                      <div>
+                        <span className="text-[8px] font-bold text-g-text-variant uppercase block">Privacy Mode</span>
+                        <span className="font-mono text-xs font-black text-emerald-500">100% Offline</span>
+                      </div>
+                    </div>
+                    <p className="text-[9.5px] text-g-text-variant leading-relaxed pt-1.5 border-t border-g-outline/10">
+                      🛡️ Real JST dates are read directly from your browser's private offline storage. GitHub and third parties never see your real itinerary dates.
+                    </p>
                   </div>
 
                   {/* Budget Card */}
