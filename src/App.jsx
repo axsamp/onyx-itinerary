@@ -65,7 +65,7 @@ export default function App() {
         if (parsed.startDate) return parsed.startDate;
       } catch (e) {}
     }
-    return '2026-05-18'; // Secure generic template fallback
+    return '2026-06-09'; // Secure generic template fallback
   });
 
   const [locations, setLocations] = useState(() => {
@@ -79,7 +79,7 @@ export default function App() {
       
       if ((offset === undefined || offset === null) && item.arrivalDate) {
         // Calculate offset relative to template start date
-        const base = new Date('2026-05-18');
+        const base = new Date('2026-06-09');
         const target = new Date(item.arrivalDate);
         const diffTime = target - base;
         offset = Math.round(diffTime / (1000 * 60 * 60 * 24));
@@ -697,7 +697,6 @@ export default function App() {
                 <div className="space-y-6">
                   {scheduledLocations.map((loc, idx) => {
                     const resolvedArrivalDate = getArrivalDate(loc);
-                    const prevLoc = idx > 0 ? scheduledLocations[index - 1] : null;
                     const dateHeader = idx === 0 || scheduledLocations[idx - 1].dayOffset !== loc.dayOffset;
                     const conflict = hasConflict(loc, idx);
                     
